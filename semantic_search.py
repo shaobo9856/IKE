@@ -1,30 +1,44 @@
 from sentence_transformers import SentenceTransformer, util
 import torch
 import pickle
+import json
 
 with open('embeddings.pkl', "rb") as fIn:
-    stored_data = pickle.load(fIn)
-    stored_sentences = stored_data['sentences']
-    stored_embeddings = stored_data['embeddings']
+    data = pickle.load(fIn)
+    query_ids = data['query_ids']
+    corpus_ids = data['corpus_ids']
 
-corpus_embeddings = torch.tensor(stored_embeddings[2000*13:]) # 包含第 2000*13 之后的嵌入，作为语料库。 代码中2000*13和13*2000是因为每个实例包含13个不同的句子嵌入。
-query_embeddings = torch.tensor(stored_embeddings[:13*2000]) # 包含前 2000*13 的嵌入，作为查询。
+    query_sentences = data['query_sentences']
+    query_embeddings = torch.tensor(data['query_embeddings']).to('cuda')
+    query_embeddings = util.normalize_embeddings(query_embeddings)
 
-corpus_embeddings = corpus_embeddings.to('cuda')
-corpus_embeddings = util.normalize_embeddings(corpus_embeddings)
+    corpus_sentences = data['corpus_sentences']
+    corpus_embeddings = torch.tensor(data['corpus_embeddings']).to('cuda')
+    corpus_embeddings = util.normalize_embeddings(corpus_embeddings)
 
-query_embeddings = query_embeddings.to('cuda')
-query_embeddings = util.normalize_embeddings(query_embeddings)
+    #util.semantic_search：这个函数执行语义搜索，找到每个查询在语料库中得分最高的 top_k 个匹配项。 score_function=util.dot_score：使用点积作为相似度度量。
+    hits = util.semantic_search(query_embeddings, corpus_embeddings, score_function=util.dot_score, top_k=64)
 
-#util.semantic_search：这个函数执行语义搜索，找到每个查询在语料库中得分最高的 top_k 个匹配项。 score_function=util.dot_score：使用点积作为相似度度量。
-hits = util.semantic_search(query_embeddings, corpus_embeddings, score_function=util.dot_score, top_k=64)
+    # print(hits)
 
-# print(hits)
+    ids = []
+    for i, hit in enumerate(hits):
+        query_id = query_ids[i]
+        retrieved_ids = []
+        for k in range(len(hit)):
+            retrieved_ids.append(corpus_ids[hit[k]['corpus_id']])
+        
+        ids.append({'query_id': query_id,
+                'corpus_ids': retrieved_ids})
+
+with open('corpus_idx.json', 'wt') as f_out:
+    json.dump(ids, f_out, ensure_ascii=False, indent=2)
+
 
 #hit[k]['corpus_id']+2000*13 计算实际的 corpus_id，因为语料库嵌入是在 stored_embeddings 的后半部分。 输出每个查询匹配的语料库嵌入的 corpus_id。
-for i, hit in enumerate(hits):
-    # print("Query:", stored_sentences[i])
-    for k in range(len(hit)):
-        print(hit[k]['corpus_id']+2000*13, end=" ")
-        # print(hit[k]['score'])
-    print("")
+# for i, hit in enumerate(hits):
+#     # print("Query:", stored_sentences[i])
+#     for k in range(len(hit)):
+#         print(hit[k]['corpus_id']+2000*13, end=" ")
+#         # print(hit[k]['score'])
+#     print("")

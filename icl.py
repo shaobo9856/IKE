@@ -89,7 +89,7 @@ if __name__ == '__main__':
 
     lines = []
 
-    with open('./counterfact.json', 'r') as f:
+    with open('./data/zsre.json', 'r') as f:
         lines = json.load(f)
     icl_examples = []
     demos = lines[2000:]
@@ -107,61 +107,64 @@ if __name__ == '__main__':
 
     # icl_cnt = 0
     example_idx = 0
-    for i, line in enumerate(lines): # 前2000条
+    for i, line in enumerate(lines): # 前10条
 
         if i % 10 == 0:
             print(i, success_cnt, total_cnt, magnitude / (total_cnt + 1e-12), para_success_cnt, para_magnitude / (para_total_cnt + 1e-12), orig_success_cnt ,orig_magnitude / (i + 1e-12))
-        relation = line['requested_rewrite']['relation_id']
-        prompt = line['requested_rewrite']['prompt']
-        subject = line['requested_rewrite']['subject']
-        prompt_calibrate = prompt.format('SUBJECT')
-        prompt = prompt.format(subject)
-        PROMPTS = [prompt, prompt_calibrate]
+        # relation = line['requested_rewrite']['relation_id']
+        # prompt = line['requested_rewrite']['prompt']
+        # subject = line['requested_rewrite']['subject']
+        # prompt_calibrate = prompt.format('SUBJECT')
+        # prompt = prompt.format(subject)
+        # PROMPTS = [prompt, prompt_calibrate]
+        en_data = line['en']
+        id = en_data['id']
+        prompt = en_data['prompt']
 
-        target_true = line['requested_rewrite']['target_true']['str']
+        # target_true = line['requested_rewrite']['target_true']['str']
         target_new = line['requested_rewrite']['target_new']['str']
         
-        PPLs = []
-        targets = [target_new, target_true]
+        # PPLs = []
+        # targets = [target_new, target_true]
         icl_examples = construct_icl_examples(example_idx, demos)       # 
-
 
         icl_examples.append(f'New Fact: {prompt} {target_new}\nPrompt: {prompt} {target_new}\n\n')
 
         example_idx += 1
-       
+
+
        # ppls: 一个包含困惑度（Perplexity, PPL）的列表。每个目标文本对应一个困惑度值。 icl_examples: 构建的 ICL 示例列表，这些示例将作为模型的输入上下文。 targets: 目标字符串列表，即模型需要预测的目标文本。x: 追加到 ICL 示例后的查询文本（query text）。
-        edit_ppls = icl_lm_eval(model, tokenizer, icl_examples, [target_new, target_true], f'New Fact: {prompt} {target_new}\nPrompt: {prompt}')
+    #     edit_ppls = icl_lm_eval(model, tokenizer, icl_examples, [target_new, target_true], f'New Fact: {prompt} {target_new}\nPrompt: {prompt}')
 
-        edit_final_probs = [1 / edit_ppls[0], 1 / edit_ppls[1]]         # 如果 edit_ppls[0]（target_new 的困惑度）明显低于 edit_ppls[1]（target_true 的困惑度），说明模型更倾向于接受新事实。
-        orig_total_cnt += 1
-        if edit_final_probs[0] > edit_final_probs[1]:
-            orig_success_cnt += 1
-        orig_magnitude += edit_final_probs[0] - edit_final_probs[1]
+    #     edit_final_probs = [1 / edit_ppls[0], 1 / edit_ppls[1]]         # 如果 edit_ppls[0]（target_new 的困惑度）明显低于 edit_ppls[1]（target_true 的困惑度），说明模型更倾向于接受新事实。
+    #     orig_total_cnt += 1
+    #     if edit_final_probs[0] > edit_final_probs[1]:
+    #         orig_success_cnt += 1
+    #     orig_magnitude += edit_final_probs[0] - edit_final_probs[1]
 
 
-        targets = [target_new, target_true]
+    #     targets = [target_new, target_true]
 
-        paraphrases = line['paraphrase_prompts']
-        for paraphrase in paraphrases:
-            paraphrase_ppls = icl_lm_eval(model, tokenizer, icl_examples, [target_new, target_true], f'New Fact: {prompt} {target_new}\nPrompt: {paraphrase}')
-            paraphrase_final_probs = [1 / paraphrase_ppls[0], 1 / paraphrase_ppls[1]]
+    #     paraphrases = line['paraphrase_prompts']
+    #     for paraphrase in paraphrases:
+    #         paraphrase_ppls = icl_lm_eval(model, tokenizer, icl_examples, [target_new, target_true], f'New Fact: {prompt} {target_new}\nPrompt: {paraphrase}')
+    #         paraphrase_final_probs = [1 / paraphrase_ppls[0], 1 / paraphrase_ppls[1]]
             
-            if paraphrase_final_probs[0] > paraphrase_final_probs[1]:
-                para_success_cnt += 1
-            para_magnitude += paraphrase_final_probs[0] - paraphrase_final_probs[1]
-            para_total_cnt += 1
+    #         if paraphrase_final_probs[0] > paraphrase_final_probs[1]:
+    #             para_success_cnt += 1
+    #         para_magnitude += paraphrase_final_probs[0] - paraphrase_final_probs[1]
+    #         para_total_cnt += 1
 
-        neighbors = line['neighborhood_prompts']
-        for neighbor in neighbors:
-            neighbor_ppls = icl_lm_eval(model, tokenizer, icl_examples, [target_true, target_new], f'New Fact: {prompt} {target_new}\nPrompt: {neighbor}')
-            neighbor_final_probs = [1 / neighbor_ppls[0], 1 / neighbor_ppls[1]]
+    #     neighbors = line['neighborhood_prompts']
+    #     for neighbor in neighbors:
+    #         neighbor_ppls = icl_lm_eval(model, tokenizer, icl_examples, [target_true, target_new], f'New Fact: {prompt} {target_new}\nPrompt: {neighbor}')
+    #         neighbor_final_probs = [1 / neighbor_ppls[0], 1 / neighbor_ppls[1]]
             
-            if neighbor_final_probs[0] > neighbor_final_probs[1]:
-                success_cnt += 1
-            magnitude += neighbor_final_probs[0] - neighbor_final_probs[1]
-            total_cnt += 1
+    #         if neighbor_final_probs[0] > neighbor_final_probs[1]:
+    #             success_cnt += 1
+    #         magnitude += neighbor_final_probs[0] - neighbor_final_probs[1]
+    #         total_cnt += 1
 
 
 
-    print(success_cnt/total_cnt, magnitude/total_cnt, para_success_cnt/para_total_cnt, para_magnitude/para_total_cnt, orig_success_cnt/orig_total_cnt, orig_magnitude/orig_total_cnt)
+    # print(success_cnt/total_cnt, magnitude/total_cnt, para_success_cnt/para_total_cnt, para_magnitude/para_total_cnt, orig_success_cnt/orig_total_cnt, orig_magnitude/orig_total_cnt)
