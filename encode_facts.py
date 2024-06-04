@@ -3,42 +3,31 @@ import pickle
 import json
 
 model = SentenceTransformer('all-MiniLM-L6-v2')
-with open('./counterfact.json', 'r') as f:
+with open('./data/zsre.json', 'r') as f:
     lines = json.load(f)
 
 sentences = []
 subjects = []
-for i, line in enumerate(lines):
-    new_fact = line['requested_rewrite']['prompt'].format(line['requested_rewrite']['subject']) + ' ' + line['requested_rewrite']['target_new']['str']
-    target_new = line['requested_rewrite']['target_new']['str']
-    target_true = line['requested_rewrite']['target_true']['str']
-    paraphrases = line['paraphrase_prompts']
-    neighbors = line['neighborhood_prompts']
-    subject = line['requested_rewrite']['subject']
-    if i > 2000:
-        sentences.append(f"New Fact: {new_fact}\nPrompt: {new_fact}")
-    else:
-        sentences.append(f"New Fact: {new_fact}\nPrompt: {line['requested_rewrite']['prompt'].format(line['requested_rewrite']['subject'])}")
+
+for line in lines:
+    en_data = line['en']
+    new_fact = en_data['new_fact']
+    prompt = en_data['prompt']
+    type_ = en_data['type']
+    subject = en_data['id']  # 假设 id 是唯一标识符
+
+    if type_ == 'copy':
+        sentences.append(f"New Fact: {new_fact}\nPrompt: {prompt}")
+    elif type_ == 'update':
+        sentences.append(f"New Fact: {new_fact}\nPrompt: {prompt}")
+    elif type_ == 'retain':
+        sentences.append(f"New Fact: {new_fact}\nPrompt: {prompt}")
+
     subjects.append(subject)
-    for p in paraphrases:
-        if i> 2000:
-            sentences.append(f"New Fact: {new_fact}\nPrompt: {p} {target_new}") # 2000个后作为corpus_embeddings，作为语料库。
-        else:
-            sentences.append(f"New Fact: {new_fact}\nPrompt: {p}") # 前2000个作为query_embeddings，作为查询。
-        subjects.append(subject)
-    for n in neighbors:
-        if i > 2000:
-            sentences.append(f"New Fact: {new_fact}\nPrompt: {n} {target_true}")
-        else:
-            sentences.append(f"New Fact: {new_fact}\nPrompt: {n}")
-        subjects.append(subject)
-# sentences = [line['requested_rewrite']['prompt'].format(line['requested_rewrite']['subject']) + ' ' + line['requested_rewrite']['target_new']['str'] for line in lines]
-# sentences = ['This framework generates embeddings for each input sentence',
-#     'Sentences are passed as a list of string.', 
-#     'The quick brown fox jumps over the lazy dog.']
 
 
-embeddings = model.encode(sentences)
+
+embeddings = model.encode(sentences, show_progress_bar=True)
 
 #Store sentences & embeddings on disc
 with open('embeddings.pkl', "wb") as fOut:
