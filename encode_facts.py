@@ -20,7 +20,7 @@ for line in lines:
     type_ = en_data['type']
     id = en_data['id']
 
-    if id < 10:
+    if id <= 10:
         query_sentences.append(f"New Fact: {new_fact}\nPrompt: {prompt}")
         query_ids.append(id)
     else:
