@@ -253,13 +253,14 @@ if __name__ == '__main__':
         icl_examples.append(f'New Fact: {new_fact}\nPrompt: {prompt}\n\n')
         ans = icl_lm_eval(model,tokenizer,icl_examples,prompt)
 
-        reliablilty_f1, reliablilty_em = obtain_f1_and_em(ans,
-                                                          prompt)
+        reliablilty_f1, reliablilty_em = obtain_f1_and_em(ans, prompt[prompt.find('?')+1:])
         reliablilty_f1_list.append(reliablilty_f1)
         reliablilty_em_list.append(reliablilty_em)
 
         example_idx += 1
 
+    print("F1 score")
+    print("reliablilty_f1: %f" % (my_avg(reliablilty_f1_list)))
 
 
     # ppls: 一个包含困惑度（Perplexity, PPL）的列表。每个目标文本对应一个困惑度值。 icl_examples: 构建的 ICL 示例列表，这些示例将作为模型的输入上下文。 targets: 目标字符串列表，即模型需要预测的目标文本。x: 追加到 ICL 示例后的查询文本（query text）。
