@@ -39,67 +39,6 @@ def my_avg(a):
     return round(sum(a) * 100 / float(len(a)), 2)
 
 
-def calculate_metrics(file_root):
-    with open(file_root, "r", encoding="utf-8") as f:
-        data = json.load(f)
-
-    reliablilty_f1_list = []
-    reliablilty_em_list = []
-
-    generalization_f1_list = []
-    generalization_em_list = []
-
-    locality_f1_list = []
-    locality_em_list = []
-    specificity_f1_list = []
-    specificity_em_list = []
-
-    portablility_f1_list = []
-    portablility_em_list = []
-
-    for item in tqdm(data):
-        reliablilty_f1, reliablilty_em = obtain_f1_and_em(item["post"]["reliability"]["ans"],
-                                                          item["post"]["reliability"]["target"])
-        reliablilty_f1_list.append(reliablilty_f1)
-        reliablilty_em_list.append(reliablilty_em)
-
-        generalization_f1, generalization_em = obtain_f1_and_em(item["post"]["generalization"]["rephrase_acc"]["ans"],
-                                                                item["post"]["generalization"]["rephrase_acc"][
-                                                                    "target"])
-        generalization_f1_list.append(generalization_f1)
-        generalization_em_list.append(generalization_em)
-
-        locality_f1, locality_em = obtain_f1_and_em(item["post"]["locality"]["neighborhood_acc"]["ans"],
-                                                          item["pre"]["locality"]["neighborhood_acc"]["ans"])
-        locality_f1_list.append(locality_f1)
-        locality_em_list.append(locality_em)
-
-
-        portablility_f1, portablility_em = obtain_f1_and_em(item["post"]["portability"]["one_hop_acc"]["ans"],
-                                                            item["post"]["portability"]["one_hop_acc"]["target"])
-        portablility_f1_list.append(portablility_f1)
-        portablility_em_list.append(portablility_em)
-
-
-
-    print("=" * 20 + file_root + "=" * 20)
-    print("F1 score")
-    print("reliablilty_f1: %f" % (my_avg(reliablilty_f1_list)))
-    print("generalization_f1: %f" % my_avg(generalization_f1_list))
-    print("locality_f1: %f"%my_avg(locality_f1_list))
-    print("portablility_f1: %f" % my_avg(portablility_f1_list))
-
-    print("EM score")
-    print("reliablilty_em: %f" % (my_avg(reliablilty_em_list)))
-    print("generalization_em: %f" % my_avg(generalization_em_list))
-    print("locality_em: %f"%my_avg(locality_em_list))
-    print("portablility_em: %f" % my_avg(portablility_em_list))
-
-    reli, gene, loca, port = str(my_avg(reliablilty_f1_list)) + '/' + str(my_avg(reliablilty_em_list)),str(my_avg(generalization_f1_list)) + '/' + str(my_avg(generalization_em_list)),str(my_avg(locality_f1_list)) + '/' + str(my_avg(locality_em_list)),str(my_avg(portablility_f1_list)) + '/' + str(my_avg(portablility_em_list))
-
-    return reli, gene, loca, port
-
-
 def icl_lm_eval(
         model,
         tokenizer,
@@ -120,8 +59,6 @@ def icl_lm_eval(
 
     textual_ans = tokenizer.decode(ans[0], skip_special_tokens=True)
 
-    if neighborhood:
-        return textual_ans
     return textual_ans
 
 
@@ -133,7 +70,6 @@ def parse_args():
 
 device = 'cuda'
 model_name = 'EleutherAI/gpt-j-6B'
-
 
 
 
@@ -298,6 +234,12 @@ if __name__ == '__main__':
     print("generalization_f1: %f" % my_avg(generalization_f1_list))
     print("locality_f1: %f"%my_avg(locality_f1_list))
     print("portablility_f1: %f" % my_avg(portablility_f1_list))
+
+    print("EM score")
+    print("reliablilty_em: %f" % (my_avg(reliablilty_em_list)))
+    print("generalization_em: %f" % my_avg(generalization_em_list))
+    print("locality_em: %f"%my_avg(locality_em_list))
+    print("portablility_em: %f" % my_avg(portablility_em_list))
 
     # ppls: 一个包含困惑度（Perplexity, PPL）的列表。每个目标文本对应一个困惑度值。 icl_examples: 构建的 ICL 示例列表，这些示例将作为模型的输入上下文。 targets: 目标字符串列表，即模型需要预测的目标文本。x: 追加到 ICL 示例后的查询文本（query text）。
     #     edit_ppls = icl_lm_eval(model, tokenizer, icl_examples, [target_new, target_true], f'New Fact: {prompt} {target_new}\nPrompt: {prompt}')
