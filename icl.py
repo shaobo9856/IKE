@@ -44,13 +44,14 @@ def icl_lm_eval(
         tokenizer,
         icl_examples,
         prompt,
+        target,
         neighborhood=False
 ):
     device = torch.device(f'cuda:0')
     # target_ids = tokenizer(target, return_tensors='pt')['input_ids'].to(device)
-    encodings = tokenizer(''.join(icl_examples) + f'{prompt}', return_tensors='pt',max_length=1520) 
-    input_ids = encodings['input_ids'].to(device)
-    attention_mask = encodings['attention_mask'].to(device)
+    # encodings = tokenizer(''.join(icl_examples) + f'{prompt}', return_tensors='pt',max_length=1520) 
+    # input_ids = encodings['input_ids'].to(device)
+    # attention_mask = encodings['attention_mask'].to(device)
     # logits = model(input_ids=input_ids, attention_mask=attention_mask).logits
     # ans = torch.argmax(logits, dim=-1) #[:,-target_ids.size(1):-1].squeeze()
     # # ans_idss = ans.detach().cpu().numpy().tolist()
@@ -62,15 +63,30 @@ def icl_lm_eval(
     # return textual_ans
     
     # 使用 generate 方法生成文本
-    with torch.no_grad():
-        outputs = model.generate(input_ids=input_ids, attention_mask=attention_mask, max_new_tokens=50)
+    # with torch.no_grad():
+    #     outputs = model.generate(input_ids=input_ids, attention_mask=attention_mask, max_new_tokens=50)
     
-    generated_ids = outputs[0][input_ids.shape[-1]:]  # 只保留生成的新token
+    # generated_ids = outputs[0][input_ids.shape[-1]:]  # 只保留生成的新token
 
-    # 解码生成的 token 为字符串
-    textual_ans = tokenizer.decode(generated_ids, skip_special_tokens=True)
+    # # 解码生成的 token 为字符串
+    # textual_ans = tokenizer.decode(generated_ids, skip_special_tokens=True)
+    # return textual_ans
+    target_ids = tokenizer(target, return_tensors='pt')['input_ids'].to(device)
+    encodings = tokenizer(''.join(icl_examples) + f'{prompt}', return_tensors='pt',max_length=1520) # few shot  -> zero shot: ''.join(icl_examples) + 
+    input_ids = encodings['input_ids'].to(device)
+    attention_mask = encodings['attention_mask'].to(device)
+    logits = model(input_ids=input_ids, attention_mask=attention_mask).logits
+    ans = torch.argmax(logits, dim=-1)[:,-target_ids.size(1):-1].squeeze()
+    target_ids = target_ids[:,1:]
+
+    
+    ans_idss = ans.detach().cpu().numpy().tolist()
+    target_idss = target_ids.detach().cpu().squeeze().numpy().tolist()
+    if not isinstance(ans_idss, list):
+        ans_idss = [ans_idss]
+
+    textual_ans = tokenizer.decode(ans_idss, skip_special_tokens=True)
     return textual_ans
-
 
 def parse_args():
     parser = argparse.ArgumentParser(description="In Context Learning for pretrained GPTs")
@@ -178,7 +194,7 @@ if __name__ == '__main__':
         print("#2")
 
         icl_examples.append(f'New Fact: {new_fact}\nPrompt: {prompt}\n\n') # ? 
-        ans = icl_lm_eval(model,tokenizer,icl_examples,prompt)
+        ans = icl_lm_eval(model,tokenizer,icl_examples,prompt,prompt[prompt.find('?')+1:])
         print("#3")
         print(f"ans:{ans}, target: {prompt[prompt.find('?')+1:]}")
         if type == "copy":
