@@ -51,14 +51,22 @@ def icl_lm_eval(
     encodings = tokenizer(''.join(icl_examples) + f'{prompt}', return_tensors='pt',max_length=1520) 
     input_ids = encodings['input_ids'].to(device)
     attention_mask = encodings['attention_mask'].to(device)
-    logits = model(input_ids=input_ids, attention_mask=attention_mask).logits
-    ans = torch.argmax(logits, dim=-1) #[:,-target_ids.size(1):-1].squeeze()
-    # ans_idss = ans.detach().cpu().numpy().tolist()
-    # if not isinstance(ans_idss, list):
-    #     ans_idss = [ans_idss]
+    # logits = model(input_ids=input_ids, attention_mask=attention_mask).logits
+    # ans = torch.argmax(logits, dim=-1) #[:,-target_ids.size(1):-1].squeeze()
+    # # ans_idss = ans.detach().cpu().numpy().tolist()
+    # # if not isinstance(ans_idss, list):
+    # #     ans_idss = [ans_idss]
 
-    textual_ans = tokenizer.decode(ans[0], skip_special_tokens=True)
+    # textual_ans = tokenizer.decode(ans[0], skip_special_tokens=True)
 
+    # return textual_ans
+    
+    # 使用 generate 方法生成文本
+    with torch.no_grad():
+        outputs = model.generate(input_ids=input_ids, attention_mask=attention_mask, max_length=input_ids.size(1) + 50)
+    
+    # 解码生成的 token 为字符串
+    textual_ans = tokenizer.decode(outputs[0], skip_special_tokens=True)
     return textual_ans
 
 
@@ -101,37 +109,8 @@ def construct_icl_examples(idx, demos): # idx为前2000条的每一个index， d
         type_ = en_data['type']
 
         icl_examples.append(f'New Fact: {new_fact} \nPrompt: {prompt} \n\n')
-        # if type_ == 0:
-        #     icl_examples.append(f'New Fact: {new_fact} {target_new}\nPrompt: {new_fact} {target_new}\n\n')
-        # elif type_ == 1:
-        #     prompt = random.choice(line['paraphrase_prompts'])
-        #     icl_examples.append(f'New Fact: {new_fact} {target_new}\nPrompt: {prompt} {target_new}\n\n')
-        # elif type_ == 2:
-        #     prompt = random.choice(line['neighborhood_prompts'])
-        #     icl_examples.append(f'New Fact: {new_fact} {target_new}\nPrompt: {prompt} {target_true}\n\n')
     icl_examples.reverse()
     return icl_examples
-
-
-# def icl_lm_eval(model, tokenizer, icl_examples, targets, x):
-#     ppls = [] 
-#     for target in targets:
-#         tgt_len = len(tokenizer.encode(' ' + target))
-#         encodings = tokenizer(''.join(icl_examples) + f'{x} {target}', return_tensors='pt')
-#         input_ids = encodings['input_ids'].to(device)
-#         target_ids = input_ids.clone()
-#         target_ids[:, :-tgt_len] = -100
-#         with torch.no_grad():
-#             outputs = model(input_ids, labels=target_ids)
-#             ppl = torch.exp(outputs.loss)
-#             ppls.append(ppl.item())
-#     return ppls
-
-# def get_final_probs(yesno_ppls, icl_ppls, orig_ppls):
-#     yes_prob = 1 / yesno_ppls[0]
-#     no_prob = 1 / yesno_ppls[1]
-#     final_probs = [yes_prob / icl_ppls[0] + no_prob / orig_ppls[0], yes_prob / icl_ppls[1] + no_prob / orig_ppls[1]]
-#     return final_probs
 
 
 if __name__ == '__main__':
@@ -185,23 +164,14 @@ if __name__ == '__main__':
 
         if i % 10 == 0:
             print(i, success_cnt, total_cnt, magnitude / (total_cnt + 1e-12), para_success_cnt, para_magnitude / (para_total_cnt + 1e-12), orig_success_cnt ,orig_magnitude / (i + 1e-12))
-        # relation = line['requested_rewrite']['relation_id']
-        # prompt = line['requested_rewrite']['prompt']
-        # subject = line['requested_rewrite']['subject']
-        # prompt_calibrate = prompt.format('SUBJECT')
-        # prompt = prompt.format(subject)
-        # PROMPTS = [prompt, prompt_calibrate]
         en_data = line['en']
         id = en_data['id']
         prompt = en_data['prompt']
         new_fact = en_data['new_fact']
         type = en_data['type']
         print("#1")
-        # target_true = line['requested_rewrite']['target_true']['str']
-        # target_new = line['requested_rewrite']['target_new']['str']
-        
-        # PPLs = []
-        # targets = [target_new, target_true]
+
+
         icl_examples = construct_icl_examples(example_idx, demos)       # 
         print("#2")
 
