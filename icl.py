@@ -208,7 +208,7 @@ if __name__ == '__main__':
         icl_examples.append(f'New Fact: {new_fact}\nPrompt: {prompt}\n\n') # ? 
         ans = icl_lm_eval(model,tokenizer,icl_examples,prompt)
         print("#3")
-
+        print(f"ans:{ans}, target: {prompt[prompt.find('?')+1:]}")
         if type == "copy":
             reliablilty_f1, reliablilty_em = obtain_f1_and_em(ans, prompt[prompt.find('?')+1:])
             reliablilty_f1_list.append(reliablilty_f1)
