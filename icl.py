@@ -63,7 +63,7 @@ def icl_lm_eval(
     
     # 使用 generate 方法生成文本
     with torch.no_grad():
-        outputs = model.generate(input_ids=input_ids, attention_mask=attention_mask, max_length=1520)
+        outputs = model.generate(input_ids=input_ids, attention_mask=attention_mask, max_length=50)
     
     # 解码生成的 token 为字符串
     textual_ans = tokenizer.decode(outputs[0], skip_special_tokens=True)
