@@ -242,23 +242,25 @@ if __name__ == '__main__':
         en_data = line['en']
         id = en_data['id']
         prompt = en_data['prompt']
-        new_fact = line['new_fact']
-
+        new_fact = en_data['new_fact']
+        print("#1")
         # target_true = line['requested_rewrite']['target_true']['str']
         # target_new = line['requested_rewrite']['target_new']['str']
         
         # PPLs = []
         # targets = [target_new, target_true]
         icl_examples = construct_icl_examples(example_idx, demos)       # 
+        print("#2")
 
         icl_examples.append(f'New Fact: {new_fact}\nPrompt: {prompt}\n\n')
         ans = icl_lm_eval(model,tokenizer,icl_examples,prompt)
-
+        print("#3")
         reliablilty_f1, reliablilty_em = obtain_f1_and_em(ans, prompt[prompt.find('?')+1:])
         reliablilty_f1_list.append(reliablilty_f1)
         reliablilty_em_list.append(reliablilty_em)
 
         example_idx += 1
+        print(example_idx)
 
     print("F1 score")
     print("reliablilty_f1: %f" % (my_avg(reliablilty_f1_list)))
