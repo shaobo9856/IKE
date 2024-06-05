@@ -158,7 +158,7 @@ def construct_icl_examples(idx, demos): # idx为前2000条的每一个index， d
     for demo_id  in demo_ids:
         # print(f"demos: {demos}")
         print(demo_id)
-        line = demos[demo_id-10]
+        line = demos[demo_id-9]
         print(line)
         new_fact = en_data['new_fact']
         prompt = en_data['prompt']
