@@ -147,13 +147,16 @@ with open('corpus_idx.json', 'r') as fIn:
     corpus_idx = [ [int(idx) for idx in line['corpus_ids']] for line in lines]
 
 def construct_icl_examples(idx, demos): # idx为前2000条的每一个index， demos为counterfact.json中2000条后
-    order = [2, 1, 2, 0, 1, 2, 2, 0, 2, 2, 1, 0, 2, 1, 2, 0, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2] #32 个元素。
-    random.shuffle(order)
+    # order = [2, 1, 2, 0, 1, 2, 2, 0, 2, 2, 1, 0, 2, 1, 2, 0, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2] #32 个元素。
+    # random.shuffle(order)
     icl_examples = []
     demo_ids = corpus_idx[idx] # 获取对应idx的最相似的32条
-    demo_ids = demo_ids[:len(order)]
-    for demo_id, o in zip(demo_ids, order):
-        print(f"demos: {demos}")
+    print(f"idx {idx}")
+    print(f"demos: {demo_ids}")
+
+    # demo_ids = demo_ids[:len(order)]
+    for demo_id  in demo_ids:
+        # print(f"demos: {demos}")
         print(demo_id)
         line = demos[demo_id-10]
         print(line)
