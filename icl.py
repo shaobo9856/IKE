@@ -138,12 +138,14 @@ model_name = 'EleutherAI/gpt-j-6B'
 
 
 with open('corpus_idx.json', 'r') as fIn:
-    lines = fIn.readlines()
+    lines = json.load(fIn)
+    
+    # lines = fIn.readlines()
     # lines = [line[:-1] for line in lines]
     for line in lines:
         print(line)
         print(line['corpus_ids'])
-        
+
     corpus_idx = [ [int(idx) for idx in line['corpus_ids']] for line in lines]
 
 def construct_icl_examples(idx, demos): # idx为前2000条的每一个index， demos为counterfact.json中2000条后
