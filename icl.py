@@ -137,7 +137,7 @@ model_name = 'EleutherAI/gpt-j-6B'
 
 
 
-with open('corpus_idx.txt', 'r') as fIn:
+with open('corpus_idx.json', 'r') as fIn:
     lines = fIn.readlines()
     # lines = [line[:-1] for line in lines]
     
