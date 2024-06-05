@@ -282,6 +282,10 @@ if __name__ == '__main__':
             generalization_f1_list.append(generalization_f1)
             generalization_em_list.append(generalization_em)
         elif type == "retain":
+            locality_f1, locality_em = obtain_f1_and_em(ans, prompt[prompt.find('?')+1:])
+            locality_f1_list.append(locality_f1)
+            locality_em_list.append(locality_em)
+        elif type == "portability":
             portablility_f1, portablility_em =  obtain_f1_and_em(ans, prompt[prompt.find('?')+1:])
             portablility_f1_list.append(portablility_f1)
             portablility_em_list.append(portablility_em)
