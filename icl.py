@@ -232,6 +232,16 @@ if __name__ == '__main__':
     orig_total_cnt = 0
     reliablilty_f1_list = []
     reliablilty_em_list = []
+    generalization_f1_list = []
+    generalization_em_list = []
+
+    locality_f1_list = []
+    locality_em_list = []
+    specificity_f1_list = []
+    specificity_em_list = []
+
+    portablility_f1_list = []
+    portablility_em_list = []
 
     # icl_cnt = 0
     example_idx = 0
@@ -249,6 +259,7 @@ if __name__ == '__main__':
         id = en_data['id']
         prompt = en_data['prompt']
         new_fact = en_data['new_fact']
+        type = en_data['type']
         print("#1")
         # target_true = line['requested_rewrite']['target_true']['str']
         # target_new = line['requested_rewrite']['target_new']['str']
@@ -261,16 +272,28 @@ if __name__ == '__main__':
         icl_examples.append(f'New Fact: {new_fact}\nPrompt: {prompt}\n\n')
         ans = icl_lm_eval(model,tokenizer,icl_examples,prompt)
         print("#3")
-        reliablilty_f1, reliablilty_em = obtain_f1_and_em(ans, prompt[prompt.find('?')+1:])
-        reliablilty_f1_list.append(reliablilty_f1)
-        reliablilty_em_list.append(reliablilty_em)
+
+        if type == "copy":
+            reliablilty_f1, reliablilty_em = obtain_f1_and_em(ans, prompt[prompt.find('?')+1:])
+            reliablilty_f1_list.append(reliablilty_f1)
+            reliablilty_em_list.append(reliablilty_em)
+        elif type == "update":
+            generalization_f1, generalization_em = obtain_f1_and_em(ans, prompt[prompt.find('?')+1:])
+            generalization_f1_list.append(generalization_f1)
+            generalization_em_list.append(generalization_em)
+        elif type == "retain":
+            portablility_f1, portablility_em =  obtain_f1_and_em(ans, prompt[prompt.find('?')+1:])
+            portablility_f1_list.append(portablility_f1)
+            portablility_em_list.append(portablility_em)
 
         example_idx += 1
         print(example_idx)
 
     print("F1 score")
     print("reliablilty_f1: %f" % (my_avg(reliablilty_f1_list)))
-
+    print("generalization_f1: %f" % my_avg(generalization_f1_list))
+    print("locality_f1: %f"%my_avg(locality_f1_list))
+    print("portablility_f1: %f" % my_avg(portablility_f1_list))
 
     # ppls: 一个包含困惑度（Perplexity, PPL）的列表。每个目标文本对应一个困惑度值。 icl_examples: 构建的 ICL 示例列表，这些示例将作为模型的输入上下文。 targets: 目标字符串列表，即模型需要预测的目标文本。x: 追加到 ICL 示例后的查询文本（query text）。
     #     edit_ppls = icl_lm_eval(model, tokenizer, icl_examples, [target_new, target_true], f'New Fact: {prompt} {target_new}\nPrompt: {prompt}')
