@@ -205,7 +205,7 @@ if __name__ == '__main__':
         icl_examples = construct_icl_examples(example_idx, demos)       # 
         print("#2")
 
-        icl_examples.append(f'New Fact: {new_fact}\nPrompt: {prompt}\n\n')
+        icl_examples.append(f'New Fact: {new_fact}\nPrompt: {prompt}\n\n') # ? 
         ans = icl_lm_eval(model,tokenizer,icl_examples,prompt)
         print("#3")
 

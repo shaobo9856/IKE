@@ -17,7 +17,7 @@ with open('embeddings.pkl', "rb") as fIn:
     corpus_embeddings = util.normalize_embeddings(corpus_embeddings)
 
     #util.semantic_search：这个函数执行语义搜索，找到每个查询在语料库中得分最高的 top_k 个匹配项。 score_function=util.dot_score：使用点积作为相似度度量。
-    hits = util.semantic_search(query_embeddings, corpus_embeddings, score_function=util.dot_score, top_k=64)
+    hits = util.semantic_search(query_embeddings, corpus_embeddings, score_function=util.dot_score, top_k=6)
 
     # print(hits)
 
