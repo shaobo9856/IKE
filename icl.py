@@ -140,8 +140,6 @@ model_name = 'EleutherAI/gpt-j-6B'
 with open('corpus_idx.json', 'r') as fIn:
     lines = json.load(fIn)
     
-    # lines = fIn.readlines()
-    # lines = [line[:-1] for line in lines]
     for line in lines:
         print(line)
         print(line['corpus_ids'])
@@ -156,9 +154,7 @@ def construct_icl_examples(idx, demos): # idx为前2000条的每一个index， d
     demo_ids = demo_ids[:len(order)]
     for demo_id, o in zip(demo_ids, order):
         line = demos[demo_id]
-        new_fact = line['new_fact']
-        # target_new = line['requested_rewrite']['target_new']['str']
-        # target_true = line['requested_rewrite']['target_true']['str']
+        new_fact = en_data['new_fact']
         prompt = en_data['prompt']
         type_ = en_data['type']
 
