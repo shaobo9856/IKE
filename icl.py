@@ -234,7 +234,7 @@ if __name__ == '__main__':
     reliablilty_em_list = []
 
     # icl_cnt = 0
-    example_idx = 1
+    example_idx = 0
     for i, line in enumerate(lines): # 前10条
 
         if i % 10 == 0:
