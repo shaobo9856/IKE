@@ -85,7 +85,7 @@ def construct_icl_examples():
         lines = json.load(fIn)
         for line in lines:
             print(line)
-        icl_examples.append(f"New Fact: {line['new_fact']} \nPrompt: {line['af']} \n\n")
+        icl_examples.append(f"New Fact: {line['new_fact']} \nPrompt: {line[args.lang2]} \n\n")
     icl_examples.reverse()
     return icl_examples
 
