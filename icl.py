@@ -132,18 +132,18 @@ if __name__ == '__main__':
 
         # if i % 10 == 0:
         #     print(i, success_cnt, total_cnt, magnitude / (total_cnt + 1e-12), para_success_cnt, para_magnitude / (para_total_cnt + 1e-12), orig_success_cnt ,orig_magnitude / (i + 1e-12))
-        subject = line['en']['subject']
-        prompts_truth = line['en']['src']
-        prompts_test = line['af']['src']
+        subject = line[args.lang1]['subject']
+        prompts_truth = line[args.lang1]['src']
+        prompts_test = line[args.lang2]['src']
 
-        target_truth = line['en']['alt']
-        target_test = line['af']['alt']
+        target_truth = line[args.lang1]['alt']
+        target_test = line[args.lang2]['alt']
 
-        rephrase_prompt = line['af']['rephrase']
-        locality_prompt = line['af']['loc']
-        locality_an = line['af']['loc_ans']
-        portability_prompt = line['af']['portability']['New Question']
-        portability_an = line['af']['portability']['New Answer'] 
+        rephrase_prompt = line[args.lang2]['rephrase']
+        locality_prompt = line[args.lang2]['loc']
+        locality_an = line[args.lang2]['loc_ans']
+        portability_prompt = line[args.lang2]['portability']['New Question']
+        portability_an = line[args.lang2]['portability']['New Answer'] 
 
         icl_examples = construct_icl_examples()
         print("#2")
