@@ -40,10 +40,8 @@ The model name can be `['gpt2-xl', 'EleutherAI/gpt-neo-1.3B', 'EleutherAI/gpt-j-
 
 ### Contrastive Knowledge Assessment
 
-
-
 git clone https://github.com/shaobo9856/IKE ike
-cd ike && git checkout newdata && python3 -m venv ike && source ike/bin/activate && pip install -r requirements.txt
+cd ike && git checkout manual && python3 -m venv ike && source ike/bin/activate && pip install -r requirements.txt
 
 pip install --upgrade sentence-transformers
 
@@ -51,7 +49,7 @@ python -m pip install huggingface_hub
 
 huggingface-cli login --token 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
 
-python icl.py --tdata mzsre_test_duplicate_ --pdata zsre_multi --lang1 en --lang2 af 
+python icl.py --lang1 en --lang2 af --tdata mzsre_test_duplicate_ --pdata zsre_multi  
 
 
 encode_facts.py：  这段代码的主要目的是读取 counterfact.json 文件中的数据，生成一系列句子并使用 SentenceTransformer 模型将这些句子转换为句子嵌入，然后将这些嵌入存储到一个 pickle 文件中以便后续使用。

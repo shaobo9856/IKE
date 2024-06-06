@@ -39,7 +39,7 @@ def my_avg(a):
     return round(sum(a) * 100 / float(len(a)), 2)
 
 
-def icl_lm_eval(
+def icl_lm_eval_f1em(
         model,
         tokenizer,
         icl_examples,
@@ -89,6 +89,13 @@ def construct_icl_examples():
     icl_examples.reverse()
     return icl_examples
 
+def PPLSMmetrics(reliab, general, local ):
+    
+    return 
+
+def F1EMmetrics(reliab, general, local, portab ):
+
+    return 
 
 if __name__ == '__main__':
     # random.seed(42)
@@ -151,26 +158,26 @@ if __name__ == '__main__':
         icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
 
         # reliablilty
-        ans = icl_lm_eval(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
+        ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
         print(f"ans:{ans}, target: {target_test}")
         reliablilty_f1, reliablilty_em = obtain_f1_and_em(ans, target_test)
         reliablilty_f1_list.append(reliablilty_f1)
         reliablilty_em_list.append(reliablilty_em)
 
         # generalization
-        ans = icl_lm_eval(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
+        ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
         generalization_f1, generalization_em = obtain_f1_and_em(ans, target_test)
         generalization_f1_list.append(generalization_f1)
         generalization_em_list.append(generalization_em)
 
         # locality
-        ans = icl_lm_eval(model,tokenizer, icl_examples, locality_an, locality_prompt)
+        ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, locality_an, locality_prompt)
         locality_f1, locality_em = obtain_f1_and_em(ans, locality_an)
         locality_f1_list.append(locality_f1)
         locality_em_list.append(locality_em)
 
         # portablility
-        ans = icl_lm_eval(model,tokenizer, icl_examples, portability_an, portability_prompt)
+        ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, portability_prompt)
         portablility_f1, portablility_em =  obtain_f1_and_em(ans, portability_an)
         portablility_f1_list.append(portablility_f1)
         portablility_em_list.append(portablility_em)
