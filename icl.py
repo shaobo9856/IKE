@@ -94,13 +94,16 @@ def construct_icl_examples():
     icl_examples.reverse()
     return icl_examples
 
-def PPLSMmetrics(reliab, general, local ):
-    
-    return 
+# def PPLSMmetrics(reliab, general, local ):
+#     return 
 
-def F1EMmetrics(reliab, general, local, portab ):
+# def F1EMmetrics(ans, reliab, general, local, portab ):
+#     return 
 
-    return 
+def wrap_f1em_list(listf1, listem, ans, target):
+    single_f1, single_em = obtain_f1_and_em(ans, target)
+    listf1.append(single_f1)
+    listem.append(single_em)
 
 if __name__ == '__main__':
     # random.seed(42)
@@ -162,12 +165,20 @@ if __name__ == '__main__':
 
         icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
 
+        # if "MzsRE" in args.tdata:
+             
+        # elif  "MCounter" in args.tdata:
+             
+        # elif  "WikiFact" in args.tdata:
+            
+
         # reliablilty
         ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
         print(f"ans:{ans}, target: {target_test}")
-        reliablilty_f1, reliablilty_em = obtain_f1_and_em(ans, target_test)
-        reliablilty_f1_list.append(reliablilty_f1)
-        reliablilty_em_list.append(reliablilty_em)
+        # reliablilty_f1, reliablilty_em = obtain_f1_and_em(ans, target_test)
+        # reliablilty_f1_list.append(reliablilty_f1)
+        # reliablilty_em_list.append(reliablilty_em)
+        wrap_f1em_list(reliablilty_f1_list, reliablilty_em_list, ans, target_test)
 
         # generalization
         ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
