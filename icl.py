@@ -4,7 +4,7 @@ from transformers import GPTJForCausalLM, GPT2Tokenizer
 from transformers import GPTNeoForCausalLM, GPT2Tokenizer
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers import set_seed
-# from transformers import GPT2Tokenizer, OPTForCausalLM
+
 import json
 import argparse
 import random
@@ -14,7 +14,6 @@ from tqdm import tqdm
 
 def obtain_f1_and_em(a, b):
     global tokenizer
-
     a_words = tokenizer.encode(a, add_special_tokens=False)
     b_words = tokenizer.encode(b, add_special_tokens=False)
     if len(a_words) == 0 and len(b_words) == 0:
@@ -68,6 +67,10 @@ def icl_lm_eval(
 def parse_args():
     parser = argparse.ArgumentParser(description="In Context Learning for pretrained GPTs")
     parser.add_argument('--seed', type=int, default=42)
+    parser.add_argument("--lang1", type=str, default="")
+    parser.add_argument("--pdata", type=str, default="")
+    parser.add_argument("--tdata", type=str, default="")
+    parser.add_argument("--metrics", type=str, default="")
     args = parser.parse_args()
     return args
 
@@ -92,24 +95,13 @@ if __name__ == '__main__':
     seed = args.seed
     set_seed(seed)
     model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
-    # model = GPTJForCausalLM.from_pretrained(model_name).to(device)
-    # model = GPT2LMHeadModel.from_pretrained(model_name).to(device)
-    # model = GPTNeoXForCausalLM.from_pretrained(model_name).half().to(device)
-    # model = GPTNeoForCausalLM.from_pretrained(model_name).to(device)
     model.eval()
     tokenizer = AutoTokenizer.from_pretrained(model_name)
-    # tokenizer = GPT2TokenizerFast.from_pretrained(model_name)
-    # tokenizer = GPTNeoXTokenizerFast.from_pretrained(model_name)
-    # model = OPTForCausalLM.from_pretrained("facebook/opt-13b").to(device)
-    # tokenizer = GPT2Tokenizer.from_pretrained("facebook/opt-13b")
 
     lines = []
-
-    with open('./data/MzsRE/mzsre_test_duplicate_enaf.json', 'r') as f:
+    with open(f'./data/MzsRE/{args.tdata}.json', 'r') as f:
         lines = json.load(f)
     icl_examples = []
-    # demos = lines[10:]
-    # lines = lines[:10]
     calibrate_magnitude = .0
     success_cnt = 0
     para_success_cnt = 0
@@ -151,9 +143,6 @@ if __name__ == '__main__':
         locality_an = line['af']['loc_ans']
         portability_prompt = line['af']['portability']['New Question']
         portability_an = line['af']['portability']['New Answer'] 
-
-        # new_fact = prompts_truth + target_truth
-        # prompt = prompts_test + target_test
 
         icl_examples = construct_icl_examples()
         print("#2")
@@ -199,39 +188,3 @@ if __name__ == '__main__':
     print("generalization_em: %f" % my_avg(generalization_em_list))
     print("locality_em: %f"%my_avg(locality_em_list))
     print("portablility_em: %f" % my_avg(portablility_em_list))
-
-    # ppls: 一个包含困惑度（Perplexity, PPL）的列表。每个目标文本对应一个困惑度值。 icl_examples: 构建的 ICL 示例列表，这些示例将作为模型的输入上下文。 targets: 目标字符串列表，即模型需要预测的目标文本。x: 追加到 ICL 示例后的查询文本（query text）。
-    #     edit_ppls = icl_lm_eval(model, tokenizer, icl_examples, [target_new, target_true], f'New Fact: {prompt} {target_new}\nPrompt: {prompt}')
-
-    #     edit_final_probs = [1 / edit_ppls[0], 1 / edit_ppls[1]]         # 如果 edit_ppls[0]（target_new 的困惑度）明显低于 edit_ppls[1]（target_true 的困惑度），说明模型更倾向于接受新事实。
-    #     orig_total_cnt += 1
-    #     if edit_final_probs[0] > edit_final_probs[1]:
-    #         orig_success_cnt += 1
-    #     orig_magnitude += edit_final_probs[0] - edit_final_probs[1]
-
-
-    #     targets = [target_new, target_true]
-
-    #     paraphrases = line['paraphrase_prompts']
-    #     for paraphrase in paraphrases:
-    #         paraphrase_ppls = icl_lm_eval(model, tokenizer, icl_examples, [target_new, target_true], f'New Fact: {prompt} {target_new}\nPrompt: {paraphrase}')
-    #         paraphrase_final_probs = [1 / paraphrase_ppls[0], 1 / paraphrase_ppls[1]]
-            
-    #         if paraphrase_final_probs[0] > paraphrase_final_probs[1]:
-    #             para_success_cnt += 1
-    #         para_magnitude += paraphrase_final_probs[0] - paraphrase_final_probs[1]
-    #         para_total_cnt += 1
-
-    #     neighbors = line['neighborhood_prompts']
-    #     for neighbor in neighbors:
-    #         neighbor_ppls = icl_lm_eval(model, tokenizer, icl_examples, [target_true, target_new], f'New Fact: {prompt} {target_new}\nPrompt: {neighbor}')
-    #         neighbor_final_probs = [1 / neighbor_ppls[0], 1 / neighbor_ppls[1]]
-            
-    #         if neighbor_final_probs[0] > neighbor_final_probs[1]:
-    #             success_cnt += 1
-    #         magnitude += neighbor_final_probs[0] - neighbor_final_probs[1]
-    #         total_cnt += 1
-
-
-
-    # print(success_cnt/total_cnt, magnitude/total_cnt, para_success_cnt/para_total_cnt, para_magnitude/para_total_cnt, orig_success_cnt/orig_total_cnt, orig_magnitude/orig_total_cnt)
