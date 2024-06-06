@@ -45,7 +45,6 @@ def icl_lm_eval(
         icl_examples,
         target,
         x,
-        neighborhood=False
 ):   
     device = torch.device(f'cuda:0')
     target_ids = tokenizer(target, return_tensors='pt')['input_ids'].to(device)
@@ -104,16 +103,16 @@ if __name__ == '__main__':
     with open(f'./data/MzsRE/{args.tdata}{args.lang1}{args.lang2}.json', 'r') as f:
         lines = json.load(f)
     icl_examples = []
-    calibrate_magnitude = .0
-    success_cnt = 0
-    para_success_cnt = 0
-    magnitude = .0
-    para_magnitude = .0
-    orig_magnitude = .0
-    total_cnt = 0
-    para_total_cnt = 0
-    orig_success_cnt = 0
-    orig_total_cnt = 0
+    # calibrate_magnitude = .0
+    # success_cnt = 0
+    # para_success_cnt = 0
+    # magnitude = .0
+    # para_magnitude = .0
+    # orig_magnitude = .0
+    # total_cnt = 0
+    # para_total_cnt = 0
+    # orig_success_cnt = 0
+    # orig_total_cnt = 0
     reliablilty_f1_list = []
     reliablilty_em_list = []
     generalization_f1_list = []
