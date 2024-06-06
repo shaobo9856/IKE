@@ -43,42 +43,18 @@ def icl_lm_eval(
         model,
         tokenizer,
         icl_examples,
-        prompt,
         target,
+        x,
         neighborhood=False
-):
+):   
     device = torch.device(f'cuda:0')
-    # target_ids = tokenizer(target, return_tensors='pt')['input_ids'].to(device)
-    # encodings = tokenizer(''.join(icl_examples) + f'{prompt}', return_tensors='pt',max_length=1520) 
-    # input_ids = encodings['input_ids'].to(device)
-    # attention_mask = encodings['attention_mask'].to(device)
-    # logits = model(input_ids=input_ids, attention_mask=attention_mask).logits
-    # ans = torch.argmax(logits, dim=-1) #[:,-target_ids.size(1):-1].squeeze()
-    # # ans_idss = ans.detach().cpu().numpy().tolist()
-    # # if not isinstance(ans_idss, list):
-    # #     ans_idss = [ans_idss]
-
-    # textual_ans = tokenizer.decode(ans[0], skip_special_tokens=True)
-
-    # return textual_ans
-    
-    # 使用 generate 方法生成文本
-    # with torch.no_grad():
-    #     outputs = model.generate(input_ids=input_ids, attention_mask=attention_mask, max_new_tokens=50)
-    
-    # generated_ids = outputs[0][input_ids.shape[-1]:]  # 只保留生成的新token
-
-    # # 解码生成的 token 为字符串
-    # textual_ans = tokenizer.decode(generated_ids, skip_special_tokens=True)
-    # return textual_ans
     target_ids = tokenizer(target, return_tensors='pt')['input_ids'].to(device)
-    encodings = tokenizer(''.join(icl_examples) + f'{prompt}', return_tensors='pt',max_length=1520) # few shot  -> zero shot: ''.join(icl_examples) + 
+    encodings = tokenizer(''.join(icl_examples) + f'{x} {target}', return_tensors='pt',max_length=1520) # few shot  -> zero shot: ''.join(icl_examples) + 
     input_ids = encodings['input_ids'].to(device)
     attention_mask = encodings['attention_mask'].to(device)
     logits = model(input_ids=input_ids, attention_mask=attention_mask).logits
     ans = torch.argmax(logits, dim=-1)[:,-target_ids.size(1):-1].squeeze()
     target_ids = target_ids[:,1:]
-
     
     ans_idss = ans.detach().cpu().numpy().tolist()
     target_idss = target_ids.detach().cpu().squeeze().numpy().tolist()
@@ -98,35 +74,13 @@ device = 'cuda'
 model_name = 'EleutherAI/gpt-j-6B'
 
 
-
-with open('corpus_idx.json', 'r') as fIn:
-    lines = json.load(fIn)
-    
-    for line in lines:
-        print(line)
-        print(line['corpus_ids'])
-
-    corpus_idx = [ [int(idx) for idx in line['corpus_ids']] for line in lines]
-
-def construct_icl_examples(idx, demos): # idx为前2000条的每一个index， demos为counterfact.json中2000条后
-    # order = [2, 1, 2, 0, 1, 2, 2, 0, 2, 2, 1, 0, 2, 1, 2, 0, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2] #32 个元素。
-    # random.shuffle(order)
+def construct_icl_examples(): 
     icl_examples = []
-    demo_ids = corpus_idx[idx] # 获取对应idx的最相似的32条
-    print(f"idx {idx}")
-    print(f"demos: {demo_ids}")
-
-    # demo_ids = demo_ids[:len(order)]
-    for demo_id  in demo_ids:
-        # print(f"demos: {demos}")
-        print(demo_id)
-        line = demos[demo_id-11]
-        print(line)
-        new_fact = en_data['new_fact']
-        prompt = en_data['prompt']
-        type_ = en_data['type']
-
-        icl_examples.append(f'New Fact: {new_fact} \nPrompt: {prompt} \n\n')
+    with open('zsre_multi.json', 'r') as fIn:
+        lines = json.load(fIn)
+        for line in lines:
+            print(line)
+        icl_examples.append(f"New Fact: {line['new_fact']} \nPrompt: {line['af']} \n\n")
     icl_examples.reverse()
     return icl_examples
 
@@ -148,11 +102,11 @@ if __name__ == '__main__':
 
     lines = []
 
-    with open('./data/zsre.json', 'r') as f:
+    with open('./data/MzsRE/mzsre_test_duplicate_enaf.json', 'r') as f:
         lines = json.load(f)
     icl_examples = []
-    demos = lines[10:]
-    lines = lines[:10]
+    # demos = lines[10:]
+    # lines = lines[:10]
     calibrate_magnitude = .0
     success_cnt = 0
     para_success_cnt = 0
@@ -178,41 +132,55 @@ if __name__ == '__main__':
 
     # icl_cnt = 0
     example_idx = 0
-    for i, line in enumerate(lines): # 前10条
+    for i, line in enumerate(lines): 
 
-        if i % 10 == 0:
-            print(i, success_cnt, total_cnt, magnitude / (total_cnt + 1e-12), para_success_cnt, para_magnitude / (para_total_cnt + 1e-12), orig_success_cnt ,orig_magnitude / (i + 1e-12))
-        en_data = line['en']
-        id = en_data['id']
-        prompt = en_data['prompt']
-        new_fact = en_data['new_fact']
-        type = en_data['type']
-        print("#1")
+        # if i % 10 == 0:
+        #     print(i, success_cnt, total_cnt, magnitude / (total_cnt + 1e-12), para_success_cnt, para_magnitude / (para_total_cnt + 1e-12), orig_success_cnt ,orig_magnitude / (i + 1e-12))
+        subject = line['en']['subject']
+        prompts_truth = line['en']['src']
+        prompts_test = line['af']['src']
 
+        target_truth = line['en']['alt']
+        target_test = line['af']['alt']
 
-        icl_examples = construct_icl_examples(example_idx, demos)       # 
+        rephrase_prompt = line['af']['rephrase']
+        locality_prompt = line['af']['loc']
+        locality_an = line['af']['loc_ans']
+        portability_prompt = line['af']['portability']['New Question']
+        portability_an = line['af']['portability']['New Answer'] 
+
+        # new_fact = prompts_truth + target_truth
+        # prompt = prompts_test + target_test
+
+        icl_examples = construct_icl_examples()
         print("#2")
 
-        icl_examples.append(f'New Fact: {new_fact}\nPrompt: {prompt}\n\n') # ? 
-        ans = icl_lm_eval(model,tokenizer,icl_examples,prompt,prompt[prompt.find('?')+1:])
-        print("#3")
-        print(f"ans:{ans}, target: {prompt[prompt.find('?')+1:]}")
-        if type == "copy":
-            reliablilty_f1, reliablilty_em = obtain_f1_and_em(ans, prompt[prompt.find('?')+1:])
-            reliablilty_f1_list.append(reliablilty_f1)
-            reliablilty_em_list.append(reliablilty_em)
-        elif type == "update":
-            generalization_f1, generalization_em = obtain_f1_and_em(ans, prompt[prompt.find('?')+1:])
-            generalization_f1_list.append(generalization_f1)
-            generalization_em_list.append(generalization_em)
-        elif type == "retain":
-            locality_f1, locality_em = obtain_f1_and_em(ans, prompt[prompt.find('?')+1:])
-            locality_f1_list.append(locality_f1)
-            locality_em_list.append(locality_em)
-        elif type == "portability":
-            portablility_f1, portablility_em =  obtain_f1_and_em(ans, prompt[prompt.find('?')+1:])
-            portablility_f1_list.append(portablility_f1)
-            portablility_em_list.append(portablility_em)
+        icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。
+
+        # reliablilty
+        ans = icl_lm_eval(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
+        print(f"ans:{ans}, target: {target_test}")
+        reliablilty_f1, reliablilty_em = obtain_f1_and_em(ans, target_test)
+        reliablilty_f1_list.append(reliablilty_f1)
+        reliablilty_em_list.append(reliablilty_em)
+
+        # generalization
+        ans = icl_lm_eval(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
+        generalization_f1, generalization_em = obtain_f1_and_em(ans, target_test)
+        generalization_f1_list.append(generalization_f1)
+        generalization_em_list.append(generalization_em)
+
+        # locality
+        ans = icl_lm_eval(model,tokenizer, icl_examples, locality_an, locality_prompt)
+        locality_f1, locality_em = obtain_f1_and_em(ans, locality_an)
+        locality_f1_list.append(locality_f1)
+        locality_em_list.append(locality_em)
+
+        # portablility
+        ans = icl_lm_eval(model,tokenizer, icl_examples, portability_an, portability_prompt)
+        portablility_f1, portablility_em =  obtain_f1_and_em(ans, portability_an)
+        portablility_f1_list.append(portablility_f1)
+        portablility_em_list.append(portablility_em)
 
         example_idx += 1
         print(example_idx)
