@@ -2,6 +2,7 @@ import torch
 from transformers import GPT2LMHeadModel, GPT2TokenizerFast
 from transformers import GPTJForCausalLM, GPT2Tokenizer
 from transformers import GPTNeoForCausalLM, GPT2Tokenizer
+from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers import set_seed
 # from transformers import GPT2Tokenizer, OPTForCausalLM
 import json
@@ -71,7 +72,7 @@ def parse_args():
     return args
 
 device = 'cuda'
-model_name = 'EleutherAI/gpt-j-6B'
+model_name = 'meta-llama/Meta-Llama-3-8B'
 
 
 def construct_icl_examples(): 
@@ -90,12 +91,14 @@ if __name__ == '__main__':
     args = parse_args()
     seed = args.seed
     set_seed(seed)
-    model = GPTJForCausalLM.from_pretrained(model_name).to(device)
+    model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
+    # model = GPTJForCausalLM.from_pretrained(model_name).to(device)
     # model = GPT2LMHeadModel.from_pretrained(model_name).to(device)
     # model = GPTNeoXForCausalLM.from_pretrained(model_name).half().to(device)
     # model = GPTNeoForCausalLM.from_pretrained(model_name).to(device)
     model.eval()
-    tokenizer = GPT2TokenizerFast.from_pretrained(model_name)
+    tokenizer = AutoTokenizer.from_pretrained(model_name)
+    # tokenizer = GPT2TokenizerFast.from_pretrained(model_name)
     # tokenizer = GPTNeoXTokenizerFast.from_pretrained(model_name)
     # model = OPTForCausalLM.from_pretrained("facebook/opt-13b").to(device)
     # tokenizer = GPT2Tokenizer.from_pretrained("facebook/opt-13b")
