@@ -80,7 +80,7 @@ model_name = 'meta-llama/Meta-Llama-3-8B'
 
 def construct_icl_examples(): 
     icl_examples = []
-    with open('./data/manual_prompts/zsre_multi.json', 'r') as fIn: # mcounterfact_multi   zsre_multi   wfd_multi
+    with open(f'./data/manual_prompts/{args.pdata}.json', 'r') as fIn: # mcounterfact_multi   zsre_multi   wfd_multi
         lines = json.load(fIn)
         for line in lines:
             print(line)
