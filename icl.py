@@ -76,7 +76,7 @@ model_name = 'EleutherAI/gpt-j-6B'
 
 def construct_icl_examples(): 
     icl_examples = []
-    with open('./data/manual_prompts/mcounterfact_multi.json', 'r') as fIn: # mcounterfact_multi   zsre_multi
+    with open('./data/manual_prompts/zsre_multi.json', 'r') as fIn: # mcounterfact_multi   zsre_multi   wfd_multi
         lines = json.load(fIn)
         for line in lines:
             print(line)
@@ -155,7 +155,7 @@ if __name__ == '__main__':
         icl_examples = construct_icl_examples()
         print("#2")
 
-        icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。
+        icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
 
         # reliablilty
         ans = icl_lm_eval(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
