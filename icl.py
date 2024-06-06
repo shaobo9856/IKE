@@ -165,44 +165,39 @@ if __name__ == '__main__':
 
         icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
 
-        # if "MzsRE" in args.tdata:
-             
-        # elif  "MCounter" in args.tdata:
-             
+        if "MzsRE" in args.tdata:
+            # reliablilty
+            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
+            print(f"ans:{ans}, target: {target_test}")
+            wrap_f1em_list(reliablilty_f1_list, reliablilty_em_list, ans, target_test)
+
+            # generalization
+            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
+            wrap_f1em_list(generalization_f1_list, generalization_em_list, ans, target_test)
+
+            # locality
+            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, locality_an, locality_prompt)
+            wrap_f1em_list(locality_f1_list, locality_em_list, ans, target_test)
+
+            # portablility
+            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, portability_prompt)
+            wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, target_test)
+        elif  "MCounter" in args.tdata:
+            # reliablilty
+            edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
+
+
+            # portablility
+            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, portability_prompt)
+            wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, target_test)
         # elif  "WikiFact" in args.tdata:
-            
-
-        # reliablilty
-        ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
-        print(f"ans:{ans}, target: {target_test}")
-        # reliablilty_f1, reliablilty_em = obtain_f1_and_em(ans, target_test)
-        # reliablilty_f1_list.append(reliablilty_f1)
-        # reliablilty_em_list.append(reliablilty_em)
-        wrap_f1em_list(reliablilty_f1_list, reliablilty_em_list, ans, target_test)
-
-        # generalization
-        ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
-        # generalization_f1, generalization_em = obtain_f1_and_em(ans, target_test)
-        # generalization_f1_list.append(generalization_f1)
-        # generalization_em_list.append(generalization_em)
-        wrap_f1em_list(generalization_f1_list, generalization_em_list, ans, target_test)
-
-        # locality
-        ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, locality_an, locality_prompt)
-        # locality_f1, locality_em = obtain_f1_and_em(ans, locality_an)
-        # locality_f1_list.append(locality_f1)
-        # locality_em_list.append(locality_em)
-        wrap_f1em_list(locality_f1_list, locality_em_list, ans, target_test)
-
-        # portablility
-        ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, portability_prompt)
-        # portablility_f1, portablility_em =  obtain_f1_and_em(ans, portability_an)
-        # portablility_f1_list.append(portablility_f1)
-        # portablility_em_list.append(portablility_em)
-        wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, target_test)
+            print("22")
+        else:
+            print("111")
 
         example_idx += 1
         print(example_idx)
+
 
     print("F1 score")
     print("reliablilty_f1: %f" % (my_avg(reliablilty_f1_list)))
