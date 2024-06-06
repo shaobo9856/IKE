@@ -76,7 +76,7 @@ model_name = 'EleutherAI/gpt-j-6B'
 
 def construct_icl_examples(): 
     icl_examples = []
-    with open('zsre_multi.json', 'r') as fIn:
+    with open('./data/manual_prompts/zsre_multi.json', 'r') as fIn:
         lines = json.load(fIn)
         for line in lines:
             print(line)
