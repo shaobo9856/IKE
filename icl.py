@@ -68,6 +68,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="In Context Learning for pretrained GPTs")
     parser.add_argument('--seed', type=int, default=42)
     parser.add_argument("--lang1", type=str, default="")
+    parser.add_argument("--lang2", type=str, default="")
     parser.add_argument("--pdata", type=str, default="")
     parser.add_argument("--tdata", type=str, default="")
     parser.add_argument("--metrics", type=str, default="")
@@ -99,7 +100,7 @@ if __name__ == '__main__':
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     lines = []
-    with open(f'./data/MzsRE/{args.tdata}.json', 'r') as f:
+    with open(f'./data/MzsRE/{args.tdata}{args.lang1}{args.lang2}.json', 'r') as f:
         lines = json.load(f)
     icl_examples = []
     calibrate_magnitude = .0

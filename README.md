@@ -51,7 +51,7 @@ python -m pip install huggingface_hub
 
 huggingface-cli login --token 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
 
-python icl.py --tdata mzsre_test_duplicate_enaf --pdata zsre_multi
+python icl.py --tdata mzsre_test_duplicate_ --pdata zsre_multi --lang1 en --lang2 af 
 
 
 encode_facts.py：  这段代码的主要目的是读取 counterfact.json 文件中的数据，生成一系列句子并使用 SentenceTransformer 模型将这些句子转换为句子嵌入，然后将这些嵌入存储到一个 pickle 文件中以便后续使用。
