@@ -1,7 +1,4 @@
 import torch
-from transformers import GPT2LMHeadModel, GPT2TokenizerFast
-from transformers import GPTJForCausalLM, GPT2Tokenizer
-from transformers import GPTNeoForCausalLM, GPT2Tokenizer
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers import set_seed
 
