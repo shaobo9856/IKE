@@ -182,21 +182,24 @@ if __name__ == '__main__':
 
         # generalization
         ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
-        generalization_f1, generalization_em = obtain_f1_and_em(ans, target_test)
-        generalization_f1_list.append(generalization_f1)
-        generalization_em_list.append(generalization_em)
+        # generalization_f1, generalization_em = obtain_f1_and_em(ans, target_test)
+        # generalization_f1_list.append(generalization_f1)
+        # generalization_em_list.append(generalization_em)
+        wrap_f1em_list(generalization_f1_list, generalization_em_list, ans, target_test)
 
         # locality
         ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, locality_an, locality_prompt)
-        locality_f1, locality_em = obtain_f1_and_em(ans, locality_an)
-        locality_f1_list.append(locality_f1)
-        locality_em_list.append(locality_em)
+        # locality_f1, locality_em = obtain_f1_and_em(ans, locality_an)
+        # locality_f1_list.append(locality_f1)
+        # locality_em_list.append(locality_em)
+        wrap_f1em_list(locality_f1_list, locality_em_list, ans, target_test)
 
         # portablility
         ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, portability_prompt)
-        portablility_f1, portablility_em =  obtain_f1_and_em(ans, portability_an)
-        portablility_f1_list.append(portablility_f1)
-        portablility_em_list.append(portablility_em)
+        # portablility_f1, portablility_em =  obtain_f1_and_em(ans, portability_an)
+        # portablility_f1_list.append(portablility_f1)
+        # portablility_em_list.append(portablility_em)
+        wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, target_test)
 
         example_idx += 1
         print(example_idx)
