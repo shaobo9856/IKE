@@ -39,13 +39,7 @@ def my_avg(a):
     return round(sum(a) * 100 / float(len(a)), 2)
 
 
-def icl_lm_eval_f1em(
-        model,
-        tokenizer,
-        icl_examples,
-        target,
-        x,
-):   
+def icl_lm_eval_f1em(model, tokenizer, icl_examples, target, x):   
     device = torch.device(f'cuda:0')
     target_ids = tokenizer(target, return_tensors='pt')['input_ids'].to(device)
     encodings = tokenizer(''.join(icl_examples) + f'{x} {target}', return_tensors='pt',max_length=1520) # few shot  -> zero shot: ''.join(icl_examples) + 
@@ -62,6 +56,20 @@ def icl_lm_eval_f1em(
 
     textual_ans = tokenizer.decode(ans_idss, skip_special_tokens=True)
     return textual_ans
+
+def icl_lm_eval_ppls(model, tokenizer, icl_examples, targets, x):
+    ppls = [] 
+    for target in targets:
+        tgt_len = len(tokenizer.encode(' ' + target))
+        encodings = tokenizer(''.join(icl_examples) + f'{x} {target}', return_tensors='pt')
+        input_ids = encodings['input_ids'].to(device)
+        target_ids = input_ids.clone()
+        target_ids[:, :-tgt_len] = -100
+        with torch.no_grad():
+            outputs = model(input_ids, labels=target_ids)
+            ppl = torch.exp(outputs.loss)
+            ppls.append(ppl.item())
+    return ppls
 
 def parse_args():
     parser = argparse.ArgumentParser(description="In Context Learning for pretrained GPTs")
