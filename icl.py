@@ -33,7 +33,10 @@ def obtain_f1_and_em(a, b):
 
 
 def my_avg(a):
-    return round(sum(a) * 100 / float(len(a)), 2)
+    if len(a) == 0:
+        return 0
+    else:
+        return round(sum(a) * 100 / float(len(a)), 2)
 
 
 def icl_lm_eval_f1em(model, tokenizer, icl_examples, target, x):   
@@ -240,3 +243,11 @@ if __name__ == '__main__':
     print("generalization_em: %f" % my_avg(generalization_em_list))
     print("locality_em: %f"%my_avg(locality_em_list))
     print("portablility_em: %f" % my_avg(portablility_em_list))
+
+    print("PPLS score")
+    if orig_total_cnt != 0:
+        print("reliablilty_ppls: %f" % (orig_success_cnt/orig_total_cnt, orig_magnitude/orig_total_cnt))
+    if total_cnt != 0:
+        print("locality_ppls: %f" % (success_cnt/total_cnt, magnitude/total_cnt))
+    if para_total_cnt != 0:
+        print("generalization_ppls: %f" % (para_success_cnt/para_total_cnt, para_magnitude/para_total_cnt))
