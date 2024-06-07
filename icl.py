@@ -173,46 +173,46 @@ if __name__ == '__main__':
 
             # locality (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, locality_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {locality_prompt}' )
-            wrap_f1em_list(locality_f1_list, locality_em_list, ans, target_test)
+            wrap_f1em_list(locality_f1_list, locality_em_list, ans, locality_an)
 
             # portablility (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}'  )
-            wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, target_test)
+            wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, portability_an)
         elif  "MCounter" in args.tdata:
             print("22")
             # reliablilty (ppls)
-            edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
+            edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, locality_an], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
             orig_total_cnt, orig_success_cnt, orig_magnitude = wrap_ppls_count(edit_ppls, orig_total_cnt, orig_success_cnt, orig_magnitude)
             print(f"orig_total_cnt: {orig_total_cnt}")
             print(f"orig_success_cnt: {orig_success_cnt}")
 
             # generalization (ppls)
-            edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
+            edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, locality_an], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
             para_total_cnt, para_success_cnt, para_magnitude = wrap_ppls_count(edit_ppls, para_total_cnt, para_success_cnt, para_magnitude)
 
             # locality (ppls)
-            edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test,line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {locality_prompt}')
+            edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [locality_an, target_test], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {locality_prompt}')
             total_cnt, success_cnt, magnitude = wrap_ppls_count(edit_ppls, total_cnt, success_cnt, magnitude)
             print(f"success_cnt: {success_cnt}, total_cnt {total_cnt}")
             # portablility (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}')
-            wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, target_test)
+            wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, portability_an)
         elif  "WikiFact" in args.tdata:
             # reliablilty (ppls)
-            edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
+            edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, locality_an], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
             orig_total_cnt, orig_success_cnt, orig_magnitude = wrap_ppls_count(edit_ppls, orig_total_cnt, orig_success_cnt, orig_magnitude)
 
             # generalization (ppls)
-            edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
+            edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, locality_an], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
             para_total_cnt, para_success_cnt, para_magnitude = wrap_ppls_count(edit_ppls, para_total_cnt, para_success_cnt, para_magnitude)
 
             # locality (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, locality_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {locality_prompt}')
-            wrap_f1em_list(locality_f1_list, locality_em_list, ans, target_test)
+            wrap_f1em_list(locality_f1_list, locality_em_list, ans, locality_an)
 
             # portablility (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}')
-            wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, target_test)
+            wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, portability_an)
         else:
             print("unvalid test data")
 
