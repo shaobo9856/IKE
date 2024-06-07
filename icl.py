@@ -160,7 +160,7 @@ if __name__ == '__main__':
         if "MzsRE" in args.tdata:
             # reliablilty (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
-            print(f"ans:{ans}, target: {target_test}")
+            # print(f"ans:{ans}, target: {target_test}")
             wrap_f1em_list(reliablilty_f1_list, reliablilty_em_list, ans, target_test)
 
             # generalization (f1em)
