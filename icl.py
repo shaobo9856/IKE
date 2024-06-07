@@ -144,8 +144,6 @@ if __name__ == '__main__':
     # for i, line in tqdm(enumerate(lines), total=len(lines)):
     icl_examples = construct_icl_examples()
     for i, line in enumerate(lines[:10]):
-        # if i % 10 == 0:
-        #     print(i, success_cnt, total_cnt, magnitude / (total_cnt + 1e-12), para_success_cnt, para_magnitude / (para_total_cnt + 1e-12), orig_success_cnt ,orig_magnitude / (i + 1e-12))
         subject = line[args.lang1]['subject']
         prompts_truth = line[args.lang1]['src']
         prompts_test = line[args.lang2]['src']
@@ -235,10 +233,7 @@ if __name__ == '__main__':
     print("portablility_em: %f" % my_avg(portablility_em_list))
 
     print("PPLS score")
-    print(f"orig_success_cnt: {orig_success_cnt}")
-    print("reliablilty_ppls: %f" % (orig_success_cnt/orig_total_cnt * 100,))
     if orig_total_cnt != 0:
-        print("21321")
         print("reliablilty_ppls: %f, magnitude: %f" % (orig_success_cnt/orig_total_cnt*100, orig_magnitude/orig_total_cnt*100))
     if total_cnt != 0:
         print("locality_ppls: %f, magnitude: %f" % (success_cnt/total_cnt*100, magnitude/total_cnt*100))
