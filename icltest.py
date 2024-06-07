@@ -84,8 +84,8 @@ def construct_icl_examples():
         lines = json.load(fIn)
         for line in lines:
             print(line['new_fact'])
-            lang1 = line['new_fact'] if args.lang1 == 'en' else args.lang1
-            icl_examples.append(f"New Fact: {lang1} \nPrompt: {line[args.lang2]} \n\n")
+        lang1 = line['new_fact'] if args.lang1 == 'en' else args.lang1
+        icl_examples.append(f"New Fact: {lang1} \nPrompt: {line[args.lang2]} \n\n")
     icl_examples.reverse()
     return icl_examples
 
