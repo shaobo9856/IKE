@@ -126,7 +126,7 @@ if __name__ == '__main__':
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     lines = []
-    with open(f'./data/MzsRE/{args.tdata}{args.lang1}{args.lang2}.json', 'r') as f:
+    with open(f'./data/{args.tdata}{args.lang1}{args.lang2}.json', 'r') as f:
         lines = json.load(f)
     icl_examples = []
     # calibrate_magnitude = .0
