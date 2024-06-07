@@ -128,6 +128,7 @@ if __name__ == '__main__':
 
     # icl_cnt = 0
     example_idx = 0
+    icl_examples = construct_icl_examples()
     for i, line in enumerate(lines): 
 
         # if i % 10 == 0:
@@ -145,7 +146,6 @@ if __name__ == '__main__':
         portability_prompt = line[args.lang2]['portability']['New Question']
         portability_an = line[args.lang2]['portability']['New Answer'] 
 
-        icl_examples = construct_icl_examples()
         print("#2")
 
         icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
