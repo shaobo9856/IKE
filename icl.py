@@ -6,7 +6,9 @@ import argparse
 import random
 import pickle
 from tqdm import tqdm
+import os
 
+os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'max_split_size_mb=16'
 
 def obtain_f1_and_em(a, b):
     global tokenizer
