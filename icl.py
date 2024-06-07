@@ -138,6 +138,7 @@ if __name__ == '__main__':
     example_idx = 0
     # for i, line in enumerate(tqdm(lines, total=len(lines), desc="Processing lines")):
     # for i, line in tqdm(enumerate(lines), total=len(lines)):
+    icl_examples = construct_icl_examples()
     for i, line in enumerate(lines):
         # if i % 10 == 0:
         #     print(i, success_cnt, total_cnt, magnitude / (total_cnt + 1e-12), para_success_cnt, para_magnitude / (para_total_cnt + 1e-12), orig_success_cnt ,orig_magnitude / (i + 1e-12))
@@ -154,10 +155,9 @@ if __name__ == '__main__':
         portability_prompt = line[args.lang2]['portability']['New Question']
         portability_an = line[args.lang2]['portability']['New Answer'] 
 
-        icl_examples = construct_icl_examples()
         print("#2")
 
-        icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
+        # icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
 
         if "MzsRE" in args.tdata:
             # reliablilty (f1em)
