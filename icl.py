@@ -139,10 +139,11 @@ if __name__ == '__main__':
     portablility_em_list = []
 
     example_idx = 0
+    # for i, line in enumerate(lines[:20]):
     # for i, line in enumerate(tqdm(lines, total=len(lines), desc="Processing lines")):
     # for i, line in tqdm(enumerate(lines), total=len(lines)):
     icl_examples = construct_icl_examples()
-    for i, line in enumerate(lines[:20]):
+    for i, line in enumerate(tqdm(lines, total=len(lines), desc="Processing lines")):
         subject = line[args.lang1]['subject']
         prompts_truth = line[args.lang1]['src']
         prompts_test = line[args.lang2]['src']
@@ -191,7 +192,7 @@ if __name__ == '__main__':
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [locality_an, target_test], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {locality_prompt}')
             total_cnt, success_cnt, magnitude = wrap_ppls_count(edit_ppls, total_cnt, success_cnt, magnitude)
             print(f"success_cnt: {success_cnt}, total_cnt {total_cnt}")
-            
+
             # portablility (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}')
             wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, portability_an)
