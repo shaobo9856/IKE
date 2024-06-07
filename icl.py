@@ -55,6 +55,7 @@ def icl_lm_eval_f1em(model, tokenizer, icl_examples, target, x):
     return textual_ans
 
 def icl_lm_eval_ppls(model, tokenizer, icl_examples, targets, x):
+    device = torch.device(f'cuda:0')
     ppls = [] 
     for target in targets:
         tgt_len = len(tokenizer.encode(' ' + target))
@@ -104,6 +105,7 @@ def wrap_ppls_count(edit_ppls, total_cnt, success_cnt, magnitude ):
     magnitude += edit_final_probs[0] - edit_final_probs[1]
 
 if __name__ == '__main__':
+    device = torch.device(f'cuda:0')
     args = parse_args()
     model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
     model.eval()
