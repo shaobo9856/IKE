@@ -245,8 +245,11 @@ if __name__ == '__main__':
     if para_total_cnt != 0:
         print("generalization_ppls: %f, magnitude: %f" % (para_success_cnt/para_total_cnt*100, para_magnitude/para_total_cnt*100))
 
+
     # 写入结果到文件
-    output_file_path = f'output_{args.tdata}_{args.lang1}{args.lang2}.txt'
+    root_dir = os.path.dirname(os.path.abspath(__file__))
+    output_file_name = f'output_{args.tdata}_{args.lang1}{args.lang2}.txt'
+    output_file_path = os.path.join(root_dir, output_file_name)
     if not os.path.exists(output_file_path):
         with open(output_file_path, 'w+') as f:
             f.write("F1 score\n")
