@@ -6,9 +6,7 @@ import argparse
 import random
 import pickle
 from tqdm import tqdm
-import os
 
-os.environ['PYTORCH_CUDA_ALLOC_CONF'] = 'max_split_size_mb=16'
 
 def obtain_f1_and_em(a, b):
     global tokenizer
@@ -178,39 +176,39 @@ if __name__ == '__main__':
             # portablility (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, portability_prompt)
             wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, target_test)
-        elif  "MCounter" in args.tdata:
-            print("22")
-            # reliablilty (ppls)
-            edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
-            wrap_ppls_count(edit_ppls, orig_total_cnt, orig_success_cnt, orig_magnitude)
+        # elif  "MCounter" in args.tdata:
+        #     print("22")
+        #     # reliablilty (ppls)
+        #     edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
+        #     wrap_ppls_count(edit_ppls, orig_total_cnt, orig_success_cnt, orig_magnitude)
 
-            # generalization (ppls)
-            edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
-            wrap_ppls_count(edit_ppls, para_total_cnt, para_success_cnt, para_magnitude)
+        #     # generalization (ppls)
+        #     edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
+        #     wrap_ppls_count(edit_ppls, para_total_cnt, para_success_cnt, para_magnitude)
 
-            # locality (ppls)
-            edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [locality_an, line[args.lang2]['loc_ans']], locality_prompt)
-            wrap_ppls_count(edit_ppls, total_cnt, success_cnt, magnitude)
+        #     # locality (ppls)
+        #     edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [locality_an, line[args.lang2]['loc_ans']], locality_prompt)
+        #     wrap_ppls_count(edit_ppls, total_cnt, success_cnt, magnitude)
 
-            # portablility (f1em)
-            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, portability_prompt)
-            wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, target_test)
-        elif  "WikiFact" in args.tdata:
-            # reliablilty (ppls)
-            edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
-            wrap_ppls_count(edit_ppls, orig_total_cnt, orig_success_cnt, orig_magnitude)
+        #     # portablility (f1em)
+        #     ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, portability_prompt)
+        #     wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, target_test)
+        # elif  "WikiFact" in args.tdata:
+        #     # reliablilty (ppls)
+        #     edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
+        #     wrap_ppls_count(edit_ppls, orig_total_cnt, orig_success_cnt, orig_magnitude)
 
-            # generalization (ppls)
-            edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
-            wrap_ppls_count(edit_ppls, para_total_cnt, para_success_cnt, para_magnitude)
+        #     # generalization (ppls)
+        #     edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
+        #     wrap_ppls_count(edit_ppls, para_total_cnt, para_success_cnt, para_magnitude)
 
-            # locality (f1em)
-            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, locality_an, locality_prompt)
-            wrap_f1em_list(locality_f1_list, locality_em_list, ans, target_test)
+        #     # locality (f1em)
+        #     ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, locality_an, locality_prompt)
+        #     wrap_f1em_list(locality_f1_list, locality_em_list, ans, target_test)
 
-            # portablility (f1em)
-            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, portability_prompt)
-            wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, target_test)
+        #     # portablility (f1em)
+        #     ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, portability_prompt)
+        #     wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, target_test)
         else:
             print("unvalid test data")
 
@@ -230,32 +228,32 @@ if __name__ == '__main__':
     print("locality_em: %f"%my_avg(locality_em_list))
     print("portablility_em: %f" % my_avg(portablility_em_list))
 
-    print("PPLS score")
-    if orig_total_cnt != 0:
-        print("reliablilty_ppls: %f" % (orig_success_cnt/orig_total_cnt, orig_magnitude/orig_total_cnt))
-    if total_cnt != 0:
-        print("locality_ppls: %f" % (success_cnt/total_cnt, magnitude/total_cnt))
-    if para_total_cnt != 0:
-        print("generalization_ppls: %f" % (para_success_cnt/para_total_cnt, para_magnitude/para_total_cnt))
+    # print("PPLS score")
+    # if orig_total_cnt != 0:
+    #     print("reliablilty_ppls: %f" % (orig_success_cnt/orig_total_cnt, orig_magnitude/orig_total_cnt))
+    # if total_cnt != 0:
+    #     print("locality_ppls: %f" % (success_cnt/total_cnt, magnitude/total_cnt))
+    # if para_total_cnt != 0:
+    #     print("generalization_ppls: %f" % (para_success_cnt/para_total_cnt, para_magnitude/para_total_cnt))
 
     # 写入结果到文件
-    with open(f'output_{args.tdata}_{args.lang1}{args.lang2}.txt', 'w') as f:
-        f.write("F1 score\n")
-        f.write("reliablilty_f1: %f\n" % (my_avg(reliablilty_f1_list)))
-        f.write("generalization_f1: %f\n" % my_avg(generalization_f1_list))
-        f.write("locality_f1: %f\n" % my_avg(locality_f1_list))
-        f.write("portablility_f1: %f\n" % my_avg(portablility_f1_list))
+    # with open(f'output_{args.tdata}_{args.lang1}{args.lang2}.txt', 'w') as f:
+    #     f.write("F1 score\n")
+    #     f.write("reliablilty_f1: %f\n" % (my_avg(reliablilty_f1_list)))
+    #     f.write("generalization_f1: %f\n" % my_avg(generalization_f1_list))
+    #     f.write("locality_f1: %f\n" % my_avg(locality_f1_list))
+    #     f.write("portablility_f1: %f\n" % my_avg(portablility_f1_list))
         
-        f.write("\nEM score\n")
-        f.write("reliablilty_em: %f\n" % (my_avg(reliablilty_em_list)))
-        f.write("generalization_em: %f\n" % my_avg(generalization_em_list))
-        f.write("locality_em: %f\n" % my_avg(locality_em_list))
-        f.write("portablility_em: %f\n" % my_avg(portablility_em_list))
+    #     f.write("\nEM score\n")
+    #     f.write("reliablilty_em: %f\n" % (my_avg(reliablilty_em_list)))
+    #     f.write("generalization_em: %f\n" % my_avg(generalization_em_list))
+    #     f.write("locality_em: %f\n" % my_avg(locality_em_list))
+    #     f.write("portablility_em: %f\n" % my_avg(portablility_em_list))
         
-        f.write("\nPPLS score\n")
-        if orig_total_cnt != 0:
-            f.write("reliablilty_ppls: %f\n" % (orig_success_cnt/orig_total_cnt, orig_magnitude/orig_total_cnt))
-        if total_cnt != 0:
-            f.write("locality_ppls: %f\n" % (success_cnt/total_cnt, magnitude/total_cnt))
-        if para_total_cnt != 0:
-            f.write("generalization_ppls: %f\n" % (para_success_cnt/para_total_cnt, para_magnitude/para_total_cnt))
+    #     f.write("\nPPLS score\n")
+    #     if orig_total_cnt != 0:
+    #         f.write("reliablilty_ppls: %f\n" % (orig_success_cnt/orig_total_cnt, orig_magnitude/orig_total_cnt))
+    #     if total_cnt != 0:
+    #         f.write("locality_ppls: %f\n" % (success_cnt/total_cnt, magnitude/total_cnt))
+    #     if para_total_cnt != 0:
+    #         f.write("generalization_ppls: %f\n" % (para_success_cnt/para_total_cnt, para_magnitude/para_total_cnt))
