@@ -156,7 +156,7 @@ if __name__ == '__main__':
 
         # print("#2")
 
-        icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
+        # icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
 
         if "MzsRE" in args.tdata:
             # reliablilty (f1em)
