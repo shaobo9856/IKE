@@ -250,26 +250,31 @@ if __name__ == '__main__':
     root_dir = os.path.dirname(os.path.abspath(__file__))
     output_file_name = f'output_{args.tdata}_{args.lang1}{args.lang2}.txt'
     output_file_path = os.path.join(root_dir, output_file_name)
-    if not os.path.exists(output_file_path):
-        with open(output_file_path, 'w+') as f:
-            f.write("F1 score\n")
-            f.write("reliablilty_f1: %f\n" % (my_avg(reliablilty_f1_list)))
-            f.write("generalization_f1: %f\n" % my_avg(generalization_f1_list))
-            f.write("locality_f1: %f\n" % my_avg(locality_f1_list))
-            f.write("portablility_f1: %f\n" % my_avg(portablility_f1_list))
-            
-            f.write("\nEM score\n")
-            f.write("reliablilty_em: %f\n" % (my_avg(reliablilty_em_list)))
-            f.write("generalization_em: %f\n" % my_avg(generalization_em_list))
-            f.write("locality_em: %f\n" % my_avg(locality_em_list))
-            f.write("portablility_em: %f\n" % my_avg(portablility_em_list))
-            
-            f.write("\nPPLS score\n")
-            if orig_total_cnt != 0:
-                f.write("reliablilty_ppls: %f, magnitude: %f\n" % (orig_success_cnt/orig_total_cnt*100, orig_magnitude/orig_total_cnt*100))
-            if total_cnt != 0:
-                f.write("locality_ppls: %f, magnitude: %f\n" % (success_cnt/total_cnt*100, magnitude/total_cnt*100))
-            if para_total_cnt != 0:
-                f.write("generalization_ppls: %f, magnitude: %f\n" % (para_success_cnt/para_total_cnt*100, para_magnitude/para_total_cnt*100))
-    else:
-        print("File already exists.")
+    output_folder = os.path.dirname(output_file_path)
+
+    # 确保文件夹存在
+    os.makedirs(output_folder, exist_ok=True)
+
+    # if not os.path.exists(output_file_path):
+    with open(output_file_path, 'w+') as f:
+        f.write("F1 score\n")
+        f.write("reliablilty_f1: %f\n" % (my_avg(reliablilty_f1_list)))
+        f.write("generalization_f1: %f\n" % my_avg(generalization_f1_list))
+        f.write("locality_f1: %f\n" % my_avg(locality_f1_list))
+        f.write("portablility_f1: %f\n" % my_avg(portablility_f1_list))
+        
+        f.write("\nEM score\n")
+        f.write("reliablilty_em: %f\n" % (my_avg(reliablilty_em_list)))
+        f.write("generalization_em: %f\n" % my_avg(generalization_em_list))
+        f.write("locality_em: %f\n" % my_avg(locality_em_list))
+        f.write("portablility_em: %f\n" % my_avg(portablility_em_list))
+        
+        f.write("\nPPLS score\n")
+        if orig_total_cnt != 0:
+            f.write("reliablilty_ppls: %f, magnitude: %f\n" % (orig_success_cnt/orig_total_cnt*100, orig_magnitude/orig_total_cnt*100))
+        if total_cnt != 0:
+            f.write("locality_ppls: %f, magnitude: %f\n" % (success_cnt/total_cnt*100, magnitude/total_cnt*100))
+        if para_total_cnt != 0:
+            f.write("generalization_ppls: %f, magnitude: %f\n" % (para_success_cnt/para_total_cnt*100, para_magnitude/para_total_cnt*100))
+    # else:
+    #     print("File already exists.")
