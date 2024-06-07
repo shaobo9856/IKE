@@ -154,7 +154,7 @@ if __name__ == '__main__':
         portability_prompt = line[args.lang2]['portability']['New Question']
         portability_an = line[args.lang2]['portability']['New Answer'] 
 
-        print("#2")
+        # print("#2")
 
         icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
 
@@ -213,7 +213,7 @@ if __name__ == '__main__':
             print("unvalid test data")
 
         example_idx += 1
-        print(example_idx)
+        # print(example_idx)
 
     # 打印结果
     print("F1 score")
