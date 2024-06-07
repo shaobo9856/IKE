@@ -1,7 +1,6 @@
 import torch
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers import set_seed
-
 import json
 import argparse
 import random
@@ -31,13 +30,11 @@ def obtain_f1_and_em(a, b):
     f1_score = (len(intersecting_words) * len(intersecting_words)) / float(k)
     return f1_score, em
 
-
 def my_avg(a):
     if len(a) == 0:
         return 0
     else:
         return round(sum(a) * 100 / float(len(a)), 2)
-
 
 def icl_lm_eval_f1em(model, tokenizer, icl_examples, target, x):   
     device = torch.device(f'cuda:0')
@@ -73,18 +70,15 @@ def icl_lm_eval_ppls(model, tokenizer, icl_examples, targets, x):
 
 def parse_args():
     parser = argparse.ArgumentParser(description="In Context Learning for pretrained GPTs")
-    parser.add_argument('--seed', type=int, default=42)
     parser.add_argument("--lang1", type=str, default="")
     parser.add_argument("--lang2", type=str, default="")
     parser.add_argument("--pdata", type=str, default="")
     parser.add_argument("--tdata", type=str, default="")
-    parser.add_argument("--metrics", type=str, default="")
     args = parser.parse_args()
     return args
 
 device = 'cuda'
 model_name = 'meta-llama/Meta-Llama-3-8B'
-
 
 def construct_icl_examples(): 
     icl_examples = []
@@ -97,12 +91,6 @@ def construct_icl_examples():
     icl_examples.reverse()
     return icl_examples
 
-# def PPLSMmetrics(reliab, general, local ):
-#     return 
-
-# def F1EMmetrics(ans, reliab, general, local, portab ):
-#     return 
-
 def wrap_f1em_list(listf1, listem, ans, target):
     single_f1, single_em = obtain_f1_and_em(ans, target)
     listf1.append(single_f1)
@@ -114,13 +102,9 @@ def wrap_ppls_count(edit_ppls, total_cnt, success_cnt, magnitude ):
     if edit_final_probs[0] > edit_final_probs[1]:
         success_cnt += 1
     magnitude += edit_final_probs[0] - edit_final_probs[1]
-    # return total_cnt, success_cnt, magnitude
 
 if __name__ == '__main__':
-    # random.seed(42)
     args = parse_args()
-    seed = args.seed
-    set_seed(seed)
     model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
     model.eval()
     tokenizer = AutoTokenizer.from_pretrained(model_name)
@@ -129,7 +113,6 @@ if __name__ == '__main__':
     with open(f'./data/{args.tdata}{args.lang1}{args.lang2}.json', 'r') as f:
         lines = json.load(f)
     icl_examples = []
-    # calibrate_magnitude = .0
     success_cnt = 0
     para_success_cnt = 0
     magnitude = .0
@@ -152,7 +135,6 @@ if __name__ == '__main__':
     portablility_f1_list = []
     portablility_em_list = []
 
-    # icl_cnt = 0
     example_idx = 0
     for i, line in enumerate(lines): 
         # if i % 10 == 0:
@@ -251,3 +233,25 @@ if __name__ == '__main__':
         print("locality_ppls: %f" % (success_cnt/total_cnt, magnitude/total_cnt))
     if para_total_cnt != 0:
         print("generalization_ppls: %f" % (para_success_cnt/para_total_cnt, para_magnitude/para_total_cnt))
+
+    # 写入数据到文件
+    with open(f'output_{args.tdata}_{args.lang1}{args.lang2}.txt', 'w') as f:
+        f.write("F1 score\n")
+        f.write("reliablilty_f1: %f\n" % (my_avg(reliablilty_f1_list)))
+        f.write("generalization_f1: %f\n" % my_avg(generalization_f1_list))
+        f.write("locality_f1: %f\n" % my_avg(locality_f1_list))
+        f.write("portablility_f1: %f\n" % my_avg(portablility_f1_list))
+        
+        f.write("\nEM score\n")
+        f.write("reliablilty_em: %f\n" % (my_avg(reliablilty_em_list)))
+        f.write("generalization_em: %f\n" % my_avg(generalization_em_list))
+        f.write("locality_em: %f\n" % my_avg(locality_em_list))
+        f.write("portablility_em: %f\n" % my_avg(portablility_em_list))
+        
+        f.write("\nPPLS score\n")
+        if orig_total_cnt != 0:
+            f.write("reliablilty_ppls: %f\n" % (orig_success_cnt/orig_total_cnt, orig_magnitude/orig_total_cnt))
+        if total_cnt != 0:
+            f.write("locality_ppls: %f\n" % (success_cnt/total_cnt, magnitude/total_cnt))
+        if para_total_cnt != 0:
+            f.write("generalization_ppls: %f\n" % (para_success_cnt/para_total_cnt, para_magnitude/para_total_cnt))
