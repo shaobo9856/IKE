@@ -236,14 +236,14 @@ if __name__ == '__main__':
 
     print("PPLS score")
     print(f"orig_success_cnt: {orig_success_cnt}")
-    print("reliablilty_ppls: %f" % (orig_success_cnt/orig_total_cnt))
+    print("reliablilty_ppls: %f" % (orig_success_cnt/orig_total_cnt * 100,))
     if orig_total_cnt != 0:
         print("21321")
-        print("reliablilty_ppls: %f" % (orig_success_cnt/orig_total_cnt, orig_magnitude/orig_total_cnt))
+        print("reliablilty_ppls: %f, magnitude: %f" % (orig_success_cnt/orig_total_cnt*100, orig_magnitude/orig_total_cnt*100))
     if total_cnt != 0:
-        print("locality_ppls: %f" % (success_cnt/total_cnt, magnitude/total_cnt))
+        print("locality_ppls: %f, magnitude: %f" % (success_cnt/total_cnt*100, magnitude/total_cnt*100))
     if para_total_cnt != 0:
-        print("generalization_ppls: %f" % (para_success_cnt/para_total_cnt, para_magnitude/para_total_cnt))
+        print("generalization_ppls: %f, magnitude: %f" % (para_success_cnt/para_total_cnt*100, para_magnitude/para_total_cnt*100))
 
     # 写入结果到文件
     output_file_path = f'output_{args.tdata}_{args.lang1}{args.lang2}.txt'
@@ -263,10 +263,10 @@ if __name__ == '__main__':
             
             f.write("\nPPLS score\n")
             if orig_total_cnt != 0:
-                f.write("reliablilty_ppls: %f\n" % (orig_success_cnt/orig_total_cnt, orig_magnitude/orig_total_cnt))
+                f.write("reliablilty_ppls: %f, magnitude: %f\n" % (orig_success_cnt/orig_total_cnt*100, orig_magnitude/orig_total_cnt*100))
             if total_cnt != 0:
-                f.write("locality_ppls: %f\n" % (success_cnt/total_cnt, magnitude/total_cnt))
+                f.write("locality_ppls: %f, magnitude: %f\n" % (success_cnt/total_cnt*100, magnitude/total_cnt*100))
             if para_total_cnt != 0:
-                f.write("generalization_ppls: %f\n" % (para_success_cnt/para_total_cnt, para_magnitude/para_total_cnt))
+                f.write("generalization_ppls: %f, magnitude: %f\n" % (para_success_cnt/para_total_cnt*100, para_magnitude/para_total_cnt*100))
     else:
         print("File already exists.")
