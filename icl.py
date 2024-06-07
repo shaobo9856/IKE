@@ -6,6 +6,7 @@ import argparse
 import random
 import pickle
 from tqdm import tqdm
+import os
 
 
 def obtain_f1_and_em(a, b):
@@ -240,23 +241,27 @@ if __name__ == '__main__':
         print("generalization_ppls: %f" % (para_success_cnt/para_total_cnt, para_magnitude/para_total_cnt))
 
     # 写入结果到文件
-    with open(f'output_{args.tdata}_{args.lang1}{args.lang2}.txt', 'w') as f:
-        f.write("F1 score\n")
-        f.write("reliablilty_f1: %f\n" % (my_avg(reliablilty_f1_list)))
-        f.write("generalization_f1: %f\n" % my_avg(generalization_f1_list))
-        f.write("locality_f1: %f\n" % my_avg(locality_f1_list))
-        f.write("portablility_f1: %f\n" % my_avg(portablility_f1_list))
-        
-        f.write("\nEM score\n")
-        f.write("reliablilty_em: %f\n" % (my_avg(reliablilty_em_list)))
-        f.write("generalization_em: %f\n" % my_avg(generalization_em_list))
-        f.write("locality_em: %f\n" % my_avg(locality_em_list))
-        f.write("portablility_em: %f\n" % my_avg(portablility_em_list))
-        
-        f.write("\nPPLS score\n")
-        if orig_total_cnt != 0:
-            f.write("reliablilty_ppls: %f\n" % (orig_success_cnt/orig_total_cnt, orig_magnitude/orig_total_cnt))
-        if total_cnt != 0:
-            f.write("locality_ppls: %f\n" % (success_cnt/total_cnt, magnitude/total_cnt))
-        if para_total_cnt != 0:
-            f.write("generalization_ppls: %f\n" % (para_success_cnt/para_total_cnt, para_magnitude/para_total_cnt))
+    output_file_path = f'output_{args.tdata}_{args.lang1}{args.lang2}.txt'
+    if not os.path.exists(output_file_path):
+        with open(output_file_path, 'w+') as f:
+            f.write("F1 score\n")
+            f.write("reliablilty_f1: %f\n" % (my_avg(reliablilty_f1_list)))
+            f.write("generalization_f1: %f\n" % my_avg(generalization_f1_list))
+            f.write("locality_f1: %f\n" % my_avg(locality_f1_list))
+            f.write("portablility_f1: %f\n" % my_avg(portablility_f1_list))
+            
+            f.write("\nEM score\n")
+            f.write("reliablilty_em: %f\n" % (my_avg(reliablilty_em_list)))
+            f.write("generalization_em: %f\n" % my_avg(generalization_em_list))
+            f.write("locality_em: %f\n" % my_avg(locality_em_list))
+            f.write("portablility_em: %f\n" % my_avg(portablility_em_list))
+            
+            f.write("\nPPLS score\n")
+            if orig_total_cnt != 0:
+                f.write("reliablilty_ppls: %f\n" % (orig_success_cnt/orig_total_cnt, orig_magnitude/orig_total_cnt))
+            if total_cnt != 0:
+                f.write("locality_ppls: %f\n" % (success_cnt/total_cnt, magnitude/total_cnt))
+            if para_total_cnt != 0:
+                f.write("generalization_ppls: %f\n" % (para_success_cnt/para_total_cnt, para_magnitude/para_total_cnt))
+    else:
+        print("File already exists.")
