@@ -129,6 +129,7 @@ if __name__ == '__main__':
     # icl_cnt = 0
     example_idx = 0
     icl_examples = construct_icl_examples()
+    print(f"icl_examples: {icl_examples}")
     for i, line in enumerate(lines): 
 
         # if i % 10 == 0:
