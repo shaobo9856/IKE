@@ -185,6 +185,8 @@ if __name__ == '__main__':
             # reliablilty (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
             orig_total_cnt, orig_success_cnt, orig_magnitude = wrap_ppls_count(edit_ppls, orig_total_cnt, orig_success_cnt, orig_magnitude)
+            print(f"orig_total_cnt: {orig_total_cnt}")
+            print(f"orig_success_cnt: {orig_success_cnt}")
 
             # generalization (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
@@ -233,6 +235,7 @@ if __name__ == '__main__':
     print("portablility_em: %f" % my_avg(portablility_em_list))
 
     print("PPLS score")
+    print("reliablilty_ppls: %f" % (orig_success_cnt/orig_total_cnt, orig_magnitude/orig_total_cnt))
     if orig_total_cnt != 0:
         print("reliablilty_ppls: %f" % (orig_success_cnt/orig_total_cnt, orig_magnitude/orig_total_cnt))
     if total_cnt != 0:
