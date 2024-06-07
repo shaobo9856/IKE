@@ -175,6 +175,7 @@ if __name__ == '__main__':
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, portability_prompt)
             wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, target_test)
         elif  "MCounter" in args.tdata:
+            print("22")
             # reliablilty (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
             wrap_ppls_count(edit_ppls, orig_total_cnt, orig_success_cnt, orig_magnitude)
@@ -191,7 +192,6 @@ if __name__ == '__main__':
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, portability_prompt)
             wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, target_test)
         elif  "WikiFact" in args.tdata:
-            print("22")
             # reliablilty (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
             wrap_ppls_count(edit_ppls, orig_total_cnt, orig_success_cnt, orig_magnitude)
