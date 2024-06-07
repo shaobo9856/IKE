@@ -193,7 +193,7 @@ if __name__ == '__main__':
             para_total_cnt, para_success_cnt, para_magnitude = wrap_ppls_count(edit_ppls, para_total_cnt, para_success_cnt, para_magnitude)
 
             # locality (ppls)
-            edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [locality_an, line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {locality_prompt}')
+            edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [line[args.lang2]['loc_ans'], target_test], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {locality_prompt}')
             total_cnt, success_cnt, magnitude = wrap_ppls_count(edit_ppls, total_cnt, success_cnt, magnitude)
 
             # portablility (f1em)
@@ -251,11 +251,7 @@ if __name__ == '__main__':
     output_file_name = f'output_{args.tdata}_{args.lang1}{args.lang2}.txt'
     output_file_path = os.path.join(root_dir, output_file_name)
     output_folder = os.path.dirname(output_file_path)
-
-    # 确保文件夹存在
     os.makedirs(output_folder, exist_ok=True)
-
-    # if not os.path.exists(output_file_path):
     with open(output_file_path, 'w+') as f:
         f.write("F1 score\n")
         f.write("reliablilty_f1: %f\n" % (my_avg(reliablilty_f1_list)))
@@ -276,5 +272,3 @@ if __name__ == '__main__':
             f.write("locality_ppls: %f, magnitude: %f\n" % (success_cnt/total_cnt*100, magnitude/total_cnt*100))
         if para_total_cnt != 0:
             f.write("generalization_ppls: %f, magnitude: %f\n" % (para_success_cnt/para_total_cnt*100, para_magnitude/para_total_cnt*100))
-    # else:
-    #     print("File already exists.")
