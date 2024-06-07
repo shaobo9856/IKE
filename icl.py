@@ -223,7 +223,7 @@ if __name__ == '__main__':
     print("F1 score")
     print("reliablilty_f1: %f" % (my_avg(reliablilty_f1_list)))
     print("generalization_f1: %f" % my_avg(generalization_f1_list))
-    print("locality_f1: %f"%my_avg(locality_f1_list))
+    print("locality_f1: %f" % (my_avg(locality_f1_list)))
     print("portablility_f1: %f" % my_avg(portablility_f1_list))
 
     print("EM score")
