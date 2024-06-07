@@ -143,7 +143,7 @@ if __name__ == '__main__':
     # for i, line in enumerate(tqdm(lines, total=len(lines), desc="Processing lines")):
     # for i, line in tqdm(enumerate(lines), total=len(lines)):
     icl_examples = construct_icl_examples()
-    for i, line in enumerate(lines[:50]):
+    for i, line in enumerate(lines[:10]):
         # if i % 10 == 0:
         #     print(i, success_cnt, total_cnt, magnitude / (total_cnt + 1e-12), para_success_cnt, para_magnitude / (para_total_cnt + 1e-12), orig_success_cnt ,orig_magnitude / (i + 1e-12))
         subject = line[args.lang1]['subject']
@@ -235,7 +235,8 @@ if __name__ == '__main__':
     print("portablility_em: %f" % my_avg(portablility_em_list))
 
     print("PPLS score")
-    print("reliablilty_ppls: %f" % (orig_success_cnt/orig_total_cnt, orig_magnitude/orig_total_cnt))
+    print(f"orig_success_cnt: {orig_success_cnt}")
+    print("reliablilty_ppls: %f" % (orig_success_cnt/orig_total_cnt))
     if orig_total_cnt != 0:
         print("21321")
         print("reliablilty_ppls: %f" % (orig_success_cnt/orig_total_cnt, orig_magnitude/orig_total_cnt))
