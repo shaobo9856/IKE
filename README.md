@@ -41,6 +41,7 @@ The model name can be `['gpt2-xl', 'EleutherAI/gpt-neo-1.3B', 'EleutherAI/gpt-j-
 ### Contrastive Knowledge Assessment
 
 git clone https://github.com/shaobo9856/IKE ike
+
 cd ike && git checkout manual && python3 -m venv ike && source ike/bin/activate && pip install -r requirements.txt
 
 pip install --upgrade sentence-transformers
@@ -49,7 +50,8 @@ python -m pip install huggingface_hub
 
 huggingface-cli login --token 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
 
-python icl.py --lang1 en --lang2 af --tdata MzsRE/mzsre_test_duplicate_ --pdata zsre_multi  
+python icl.py --lang1 en --lang2 af --tdata MzsRE/mzsre_test_duplicate_ --pdata zsre_multi 
+
 python icl.py --lang1 en --lang2 af --tdata MCounterFact/mcounterfact_test_ --pdata zsre_multi  
 python icl.py --lang1 en --lang2 af --tdata WikiFactDiff/wfd_test_ --pdata zsre_multi  
 
