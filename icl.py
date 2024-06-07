@@ -213,7 +213,7 @@ if __name__ == '__main__':
         example_idx += 1
         print(example_idx)
 
-
+    # 打印结果
     print("F1 score")
     print("reliablilty_f1: %f" % (my_avg(reliablilty_f1_list)))
     print("generalization_f1: %f" % my_avg(generalization_f1_list))
@@ -234,7 +234,7 @@ if __name__ == '__main__':
     if para_total_cnt != 0:
         print("generalization_ppls: %f" % (para_success_cnt/para_total_cnt, para_magnitude/para_total_cnt))
 
-    # 写入数据到文件
+    # 写入结果到文件
     with open(f'output_{args.tdata}_{args.lang1}{args.lang2}.txt', 'w') as f:
         f.write("F1 score\n")
         f.write("reliablilty_f1: %f\n" % (my_avg(reliablilty_f1_list)))
