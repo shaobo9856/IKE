@@ -136,7 +136,9 @@ if __name__ == '__main__':
     portablility_em_list = []
 
     example_idx = 0
-    for i, line in tqdm(enumerate(lines), total=len(lines)):
+    # for i, line in enumerate(tqdm(lines, total=len(lines), desc="Processing lines")):
+    # for i, line in tqdm(enumerate(lines), total=len(lines)):
+    for i, line in enumerate(lines):
         # if i % 10 == 0:
         #     print(i, success_cnt, total_cnt, magnitude / (total_cnt + 1e-12), para_success_cnt, para_magnitude / (para_total_cnt + 1e-12), orig_success_cnt ,orig_magnitude / (i + 1e-12))
         subject = line[args.lang1]['subject']
