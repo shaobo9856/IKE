@@ -87,7 +87,6 @@ def construct_icl_examples():
     with open(f'./data/manual_prompts/{args.pdata}.json', 'r') as fIn: # mcounterfact_multi   zsre_multi   wfd_multi
         lines = json.load(fIn)
         for line in lines[:1]:
-            # print(line)
             lang1 = line['new_fact'] if args.lang1 == 'en' else args.lang1
             icl_examples.append(f"New Fact: {lang1} \nPrompt: {line[args.lang2]} \n\n")
     icl_examples.reverse()
@@ -164,7 +163,6 @@ if __name__ == '__main__':
         if "MzsRE" in args.tdata:
             # reliablilty (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
-            # print(f"ans:{ans}, target: {target_test}")
             wrap_f1em_list(reliablilty_f1_list, reliablilty_em_list, ans, target_test)
 
             # generalization (f1em)
@@ -179,7 +177,6 @@ if __name__ == '__main__':
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}'  )
             wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, portability_an)
         elif  "MCounter" in args.tdata:
-            print("22")
             # reliablilty (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, locality_an], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
             orig_total_cnt, orig_success_cnt, orig_magnitude = wrap_ppls_count(edit_ppls, orig_total_cnt, orig_success_cnt, orig_magnitude)
@@ -194,6 +191,7 @@ if __name__ == '__main__':
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [locality_an, target_test], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {locality_prompt}')
             total_cnt, success_cnt, magnitude = wrap_ppls_count(edit_ppls, total_cnt, success_cnt, magnitude)
             print(f"success_cnt: {success_cnt}, total_cnt {total_cnt}")
+            
             # portablility (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}')
             wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, portability_an)
