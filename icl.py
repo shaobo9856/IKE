@@ -139,9 +139,6 @@ if __name__ == '__main__':
     portablility_em_list = []
 
     example_idx = 0
-    # for i, line in enumerate(lines[:20]):
-    # for i, line in enumerate(tqdm(lines, total=len(lines), desc="Processing lines")):
-    # for i, line in tqdm(enumerate(lines), total=len(lines)):
     icl_examples = construct_icl_examples()
     for i, line in enumerate(tqdm(lines[:30], total=len(lines[:30]), desc="Processing lines")):
         subject = line[args.lang1]['subject']
