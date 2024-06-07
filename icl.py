@@ -103,6 +103,7 @@ def wrap_ppls_count(edit_ppls, total_cnt, success_cnt, magnitude ):
     if edit_final_probs[0] > edit_final_probs[1]:
         success_cnt += 1
     magnitude += edit_final_probs[0] - edit_final_probs[1]
+    return total_cnt, success_cnt, magnitude
 
 if __name__ == '__main__':
     device = torch.device(f'cuda:0')
@@ -182,15 +183,15 @@ if __name__ == '__main__':
             print("22")
             # reliablilty (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
-            wrap_ppls_count(edit_ppls, orig_total_cnt, orig_success_cnt, orig_magnitude)
+            orig_total_cnt, orig_success_cnt, orig_magnitude = wrap_ppls_count(edit_ppls, orig_total_cnt, orig_success_cnt, orig_magnitude)
 
             # generalization (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
-            wrap_ppls_count(edit_ppls, para_total_cnt, para_success_cnt, para_magnitude)
+            para_total_cnt, para_success_cnt, para_magnitude = wrap_ppls_count(edit_ppls, para_total_cnt, para_success_cnt, para_magnitude)
 
             # locality (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [locality_an, line[args.lang2]['loc_ans']], locality_prompt)
-            wrap_ppls_count(edit_ppls, total_cnt, success_cnt, magnitude)
+            total_cnt, success_cnt, magnitude = wrap_ppls_count(edit_ppls, total_cnt, success_cnt, magnitude)
 
             # portablility (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, portability_prompt)
@@ -198,11 +199,11 @@ if __name__ == '__main__':
         elif  "WikiFact" in args.tdata:
             # reliablilty (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
-            wrap_ppls_count(edit_ppls, orig_total_cnt, orig_success_cnt, orig_magnitude)
+            orig_total_cnt, orig_success_cnt, orig_magnitude = wrap_ppls_count(edit_ppls, orig_total_cnt, orig_success_cnt, orig_magnitude)
 
             # generalization (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, line[args.lang2]['loc_ans']], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
-            wrap_ppls_count(edit_ppls, para_total_cnt, para_success_cnt, para_magnitude)
+            para_total_cnt, para_success_cnt, para_magnitude = wrap_ppls_count(edit_ppls, para_total_cnt, para_success_cnt, para_magnitude)
 
             # locality (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, locality_an, locality_prompt)
