@@ -74,21 +74,34 @@ def parse_args():
     parser = argparse.ArgumentParser(description="In Context Learning for pretrained GPTs")
     parser.add_argument("--lang1", type=str, default="")
     parser.add_argument("--lang2", type=str, default="")
-    parser.add_argument("--pdata", type=str, default="")
-    parser.add_argument("--tdata", type=str, default="")
+    parser.add_argument("--indexdata", type=str, default="")
+    parser.add_argument("--traindata", type=str, default="")
+    parser.add_argument("--testdata", type=str, default="")
     args = parser.parse_args()
     return args
 
 device = 'cuda'
 model_name = 'meta-llama/Meta-Llama-3-8B'
 
-def construct_icl_examples(): 
+def construct_icl_examples(query_id, corpus_idx):
     icl_examples = []
-    with open(f'./data/manual_prompts/{args.pdata}.json', 'r') as fIn: # mcounterfact_multi   zsre_multi   wfd_multi
+    with open(f'./data/{args.traindata}{args.lang2}.json', 'r') as fIn: # mcounterfact_multi   zsre_multi   wfd_multi
         lines = json.load(fIn)
-        for line in lines[:1]:
-            lang1 = line['new_fact'] if args.lang1 == 'en' else args.lang1
-            icl_examples.append(f"New Fact: {lang1} \nPrompt: {line[args.lang2]} \n\n")
+        demos = {entry["case_id"]: entry for entry in lines}
+    if query_id in corpus_idx:
+        # 获取对应的idxs
+        demo_ids = corpus_idx[query_id]
+        print(demo_ids)
+        # 将每个index对应的example加入list
+        for demo_id in demo_ids:
+            line = demos[demo_id]
+            new_fact = line['src']
+            target_new = line['alt']
+            prompt = line[args.lang2]['src']
+            target_test = line[args.lang2]['alt']
+            icl_examples.append(f'New Fact: {new_fact} {target_new}\nPrompt: {prompt} {target_test}\n\n')
+    else:
+        print("query_id not found")
     icl_examples.reverse()
     return icl_examples
 
@@ -105,6 +118,12 @@ def wrap_ppls_count(edit_ppls, total_cnt, success_cnt, magnitude ):
     magnitude += edit_final_probs[0] - edit_final_probs[1]
     return total_cnt, success_cnt, magnitude
 
+def read_corpus_idx(path):
+    with open(path, 'r') as f:
+        demos = json.load(f)
+    demos_dict = {entry["query_id"]: entry["corpus_ids"] for entry in demos}
+    return demos_dict
+
 if __name__ == '__main__':
     device = torch.device(f'cuda:0')
     args = parse_args()
@@ -113,7 +132,7 @@ if __name__ == '__main__':
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     lines = []
-    with open(f'./data/{args.tdata}{args.lang1}{args.lang2}.json', 'r') as f:
+    with open(f'./data/{args.testdata}{args.lang1}{args.lang2}.json', 'r') as f:
         lines = json.load(f)
     icl_examples = []
     success_cnt = 0
@@ -138,8 +157,9 @@ if __name__ == '__main__':
     portablility_f1_list = []
     portablility_em_list = []
 
+    corpus_idx = read_corpus_idx(args.indexdata) 
+
     example_idx = 0
-    icl_examples = construct_icl_examples()
     for i, line in enumerate(tqdm(lines[:30], total=len(lines[:30]), desc="Processing lines")):
         subject = line[args.lang1]['subject']
         prompts_truth = line[args.lang1]['src']
@@ -155,10 +175,11 @@ if __name__ == '__main__':
         portability_an = line[args.lang2]['portability']['New Answer'] 
 
         # print("#2")
+        icl_examples = construct_icl_examples(i, corpus_idx)
 
         # icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
 
-        if "MzsRE" in args.tdata:
+        if "MzsRE" in args.testdata:
             # reliablilty (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
             wrap_f1em_list(reliablilty_f1_list, reliablilty_em_list, ans, target_test)
@@ -174,7 +195,7 @@ if __name__ == '__main__':
             # portablility (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}'  )
             wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, portability_an)
-        elif  "MCounter" in args.tdata:
+        elif  "MCounter" in args.testdata:
             # reliablilty (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, locality_an], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
             orig_total_cnt, orig_success_cnt, orig_magnitude = wrap_ppls_count(edit_ppls, orig_total_cnt, orig_success_cnt, orig_magnitude)
@@ -193,7 +214,7 @@ if __name__ == '__main__':
             # portablility (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}')
             wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, portability_an)
-        elif  "WikiFact" in args.tdata:
+        elif  "WikiFact" in args.testdata:
             # reliablilty (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, locality_an], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
             orig_total_cnt, orig_success_cnt, orig_magnitude = wrap_ppls_count(edit_ppls, orig_total_cnt, orig_success_cnt, orig_magnitude)
@@ -239,7 +260,7 @@ if __name__ == '__main__':
 
     # 写入结果到文件
     root_dir = os.path.dirname(os.path.abspath(__file__))
-    output_file_name = f'output_{args.tdata}_{args.lang1}{args.lang2}.txt'
+    output_file_name = f'output_{args.testdata}_{args.lang1}{args.lang2}.txt'
     output_file_path = os.path.join(root_dir, output_file_name)
     output_folder = os.path.dirname(output_file_path)
     os.makedirs(output_folder, exist_ok=True)
