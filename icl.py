@@ -95,6 +95,9 @@ def construct_icl_examples(query_id, corpus_idx):
         # 将每个index对应的example加入list
         for demo_id in demo_ids:
             line = demos[demo_id]
+            if line is None:
+                print(f"Warning: demo_id {demo_id} 不在 demos 中，跳过此条目。")
+                continue
             new_fact = line['src']
             target_new = line['alt']
             prompt = line[args.lang2]['src']
