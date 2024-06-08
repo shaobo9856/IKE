@@ -183,8 +183,11 @@ if __name__ == '__main__':
 
         # print("#2")
         icl_examples = construct_icl_examples(i, corpus_idx)
-
-        # icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
+        print(f"icl_examples: {icl_examples}")
+        print(f"prompts_truth: {prompts_truth}")
+        print(f"prompts_truth: {prompts_test}")
+        print(f"prompts_truth: {target_test}")
+        icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
 
         if "MzsRE" in args.testdata:
             # reliablilty (f1em)
