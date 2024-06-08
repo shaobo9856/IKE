@@ -183,17 +183,18 @@ if __name__ == '__main__':
 
         # print("#2")
         icl_examples = construct_icl_examples(i, corpus_idx)
+        icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
         print(f"icl_examples: {icl_examples}")
         print(f"prompts_truth: {prompts_truth}")
         print(f"prompts_test: {prompts_test}")
         print(f"target_test: {target_test}")
-        icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
 
         if "MzsRE" in args.testdata:
             # reliablilty (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
             wrap_f1em_list(reliablilty_f1_list, reliablilty_em_list, ans, target_test)
-
+            print(f"ans: {ans}, target_test: {target_test}")
+            
             # generalization (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
             wrap_f1em_list(generalization_f1_list, generalization_em_list, ans, target_test)
