@@ -119,7 +119,7 @@ def wrap_ppls_count(edit_ppls, total_cnt, success_cnt, magnitude ):
     return total_cnt, success_cnt, magnitude
 
 def read_corpus_idx(path):
-    with open(path, 'r') as f:
+    with open(f'./data/{path}.json', 'r') as f:
         demos = json.load(f)
     demos_dict = {entry["query_id"]: entry["corpus_ids"] for entry in demos}
     return demos_dict

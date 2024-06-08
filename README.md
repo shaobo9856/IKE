@@ -42,7 +42,7 @@ The model name can be `['gpt2-xl', 'EleutherAI/gpt-neo-1.3B', 'EleutherAI/gpt-j-
 
 git clone https://github.com/shaobo9856/IKE ike
 
-cd ike && git checkout manual && python3 -m venv ike && source ike/bin/activate && pip install -r requirements.txt
+cd ike && git checkout search && python3 -m venv ike && source ike/bin/activate && pip install -r requirements.txt
 
 pip install --upgrade sentence-transformers
 
@@ -52,9 +52,9 @@ huggingface-cli login --token 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
 
 python icltest.py --lang1 en --lang2 af --tdata mzsre_test_duplicate_ --pdata zsre_multi 
 
-python icl.py --lang1 en --lang2 af --tdata MzsRE/mzsre_test_duplicate_ --pdata zsre_multi 
-python icl.py --lang1 en --lang2 af --tdata MCounterFact/mcounterfact_test_ --pdata zsre_multi  
-python icl.py --lang1 en --lang2 af --tdata WikiFactDiff/wfd_test_ --pdata zsre_multi  
+python icl.py --lang1 en --lang2 af --testdata MzsRE/mzsre_test_duplicate_ --indexdata mzsre_corpus_idx  --traindata MzsRE/zsre_mend_train_ 
+python icl.py --lang1 en --lang2 af --testdata MCounterFact/mcounterfact_test_ --indexdata zsre_multi  
+python icl.py --lang1 en --lang2 af --testdata WikiFactDiff/wfd_test_ --indexdata zsre_multi  
 
 chmod +x run_icls.sh
 ./run_icls.sh
