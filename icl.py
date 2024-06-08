@@ -185,6 +185,7 @@ if __name__ == '__main__':
     portablility_f1_list = []
     portablility_em_list = []
 
+    # Print Switch
     f1r,f1g,f1l,f1p,emr,emg,eml,emp,pplr,pplg,ppll = False,False,False,False,False,False,False,False,False,False,False
 
     corpus_idx = read_corpus_idx(args.indexdata) 
