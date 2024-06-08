@@ -234,7 +234,7 @@ if __name__ == '__main__':
             para_total_cnt, para_success_cnt, para_magnitude = wrap_ppls_count(edit_ppls, para_total_cnt, para_success_cnt, para_magnitude)
 
             # locality (ppls)
-            edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [locality_an, target_test], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {locality_prompt}')
+            edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test,locality_an, ], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {locality_prompt}')
             total_cnt, success_cnt, magnitude = wrap_ppls_count(edit_ppls, total_cnt, success_cnt, magnitude)
             print(f"success_cnt: {success_cnt}, total_cnt {total_cnt}")
 
