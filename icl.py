@@ -7,7 +7,10 @@ import random
 import pickle
 from tqdm import tqdm
 import os
+import logging
 
+# Log config
+logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 
 def obtain_f1_and_em(a, b):
     global tokenizer
@@ -96,6 +99,7 @@ def construct_icl_examples(query_id, corpus_idx):
         for demo_id in demo_ids:
             if demo_id not in demos:
                 print(f"Warning: demo_id {demo_id} 不在 demos 中，跳过此条目。")
+                logging.warning(f"demo_id {demo_id} 不在 demos 中，跳过此条目。")
                 continue
             line = demos[demo_id]
             new_fact = line['src']
