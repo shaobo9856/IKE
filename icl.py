@@ -167,7 +167,7 @@ if __name__ == '__main__':
     corpus_idx = read_corpus_idx(args.indexdata) 
 
     example_idx = 0
-    for i, line in enumerate(tqdm(lines[:30], total=len(lines[:30]), desc="Processing lines")):
+    for i, line in enumerate(tqdm(lines[:5], total=len(lines[:30]), desc="Processing lines")):
         subject = line[args.lang1]['subject']
         prompts_truth = line[args.lang1]['src']
         prompts_test = line[args.lang2]['src']
@@ -185,8 +185,8 @@ if __name__ == '__main__':
         icl_examples = construct_icl_examples(i, corpus_idx)
         print(f"icl_examples: {icl_examples}")
         print(f"prompts_truth: {prompts_truth}")
-        print(f"prompts_truth: {prompts_test}")
-        print(f"prompts_truth: {target_test}")
+        print(f"prompts_test: {prompts_test}")
+        print(f"target_test: {target_test}")
         icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
 
         if "MzsRE" in args.testdata:
