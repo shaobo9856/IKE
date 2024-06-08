@@ -205,11 +205,12 @@ if __name__ == '__main__':
             # reliablilty (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
             wrap_f1em_list(reliablilty_f1_list, reliablilty_em_list, ans, target_test)
-            print(f"ans: {ans}, target_test: {target_test}")
+            print(f"reliablilty ans: {ans}, target_test: {target_test}")
 
             # generalization (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
             wrap_f1em_list(generalization_f1_list, generalization_em_list, ans, target_test)
+            print(f"generalization ans: {ans}, target_test: {target_test}")
 
             # locality (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, locality_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {locality_prompt}' )
@@ -218,6 +219,8 @@ if __name__ == '__main__':
             # portablility (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples_manual, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}'  )
             wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, portability_an)
+            print(f"portablility ans: {ans}, target_test: {portability_an}")
+
         elif  "MCounter" in args.testdata:
             # reliablilty (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, locality_an], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
