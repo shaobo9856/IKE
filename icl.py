@@ -185,6 +185,8 @@ if __name__ == '__main__':
     portablility_f1_list = []
     portablility_em_list = []
 
+    f1r,f1g,f1l,f1p,emr,emg,eml,emp,pplr,pplg,ppll = False,False,False,False,False,False,False,False,False,False,False
+
     corpus_idx = read_corpus_idx(args.indexdata) 
 
     example_idx = 0
@@ -232,6 +234,7 @@ if __name__ == '__main__':
             wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, portability_an)
             print(f"portablility ans: {ans}, target_test: {portability_an}")
 
+            f1r,f1g,f1l,f1p,emr,emg,eml,emp = True,True,True,True,True,True,True,True
         elif  "MCounter" in args.testdata:
             # reliablilty (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, locality_an], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
@@ -256,6 +259,8 @@ if __name__ == '__main__':
             # portablility (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples_manual, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}')
             wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, portability_an)
+
+            f1p,emp,pplr,pplg,ppll = True,True,True,True,True
         elif  "WikiFact" in args.testdata:
             # reliablilty (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, locality_an], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
@@ -272,32 +277,31 @@ if __name__ == '__main__':
             # portablility (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples_manual, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}')
             wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, portability_an)
+
+            f1l,f1p,eml,emp,pplr,pplg = False,False,False,False,False,False
         else:
             print("unvalid test data")
 
         example_idx += 1
         # print(example_idx)
-
+    
     # 打印结果
     print("F1 score")
-    print("reliablilty_f1: %f" % (my_avg(reliablilty_f1_list)))
-    print("generalization_f1: %f" % my_avg(generalization_f1_list))
-    print("locality_f1: %f" % (my_avg(locality_f1_list)))
-    print("portablility_f1: %f" % my_avg(portablility_f1_list))
+    if f1r: print("reliablilty_f1: %f" % (my_avg(reliablilty_f1_list)))
+    if f1g: print("generalization_f1: %f" % my_avg(generalization_f1_list))
+    if f1l: print("locality_f1: %f" % (my_avg(locality_f1_list)))
+    if f1p: print("portablility_f1: %f" % my_avg(portablility_f1_list))
 
     print("EM score")
-    print("reliablilty_em: %f" % (my_avg(reliablilty_em_list)))
-    print("generalization_em: %f" % my_avg(generalization_em_list))
-    print("locality_em: %f"%my_avg(locality_em_list))
-    print("portablility_em: %f" % my_avg(portablility_em_list))
+    if emr: print("reliablilty_em: %f" % (my_avg(reliablilty_em_list)))
+    if emg: print("generalization_em: %f" % my_avg(generalization_em_list))
+    if eml: print("locality_em: %f"%my_avg(locality_em_list))
+    if emp: print("portablility_em: %f" % my_avg(portablility_em_list))
 
     print("PPLS score")
-    if orig_total_cnt != 0:
-        print("reliablilty_ppls: %f, magnitude: %f" % (orig_success_cnt/orig_total_cnt*100, orig_magnitude/orig_total_cnt*100))
-    if total_cnt != 0:
-        print("locality_ppls: %f, magnitude: %f" % (success_cnt/total_cnt*100, magnitude/total_cnt*100))
-    if para_total_cnt != 0:
-        print("generalization_ppls: %f, magnitude: %f" % (para_success_cnt/para_total_cnt*100, para_magnitude/para_total_cnt*100))
+    if pplr: print("reliablilty_ppls: %f, magnitude: %f" % (orig_success_cnt/orig_total_cnt*100, orig_magnitude/orig_total_cnt*100))
+    if ppll: print("locality_ppls: %f, magnitude: %f" % (success_cnt/total_cnt*100, magnitude/total_cnt*100))
+    if pplg: print("generalization_ppls: %f, magnitude: %f" % (para_success_cnt/para_total_cnt*100, para_magnitude/para_total_cnt*100))
 
 
     # 写入结果到文件
