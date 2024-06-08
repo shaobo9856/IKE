@@ -97,7 +97,7 @@ def construct_icl_examples(query_id, corpus_idx):
         demo_ids = corpus_idx[query_id]
         print(demo_ids)
         # 将每个index对应的example加入list
-        for demo_id in demo_ids:
+        for demo_id in demo_ids[:1]:
             if demo_id not in demos:
                 print(f"Warning: demo_id {demo_id} 不在 demos 中，跳过此条目。")
                 logging.warning(f"demo_id {demo_id} 不在 demos 中，跳过此条目。")
