@@ -80,6 +80,7 @@ def parse_args():
     parser.add_argument("--indexdata", type=str, default="")
     parser.add_argument("--traindata", type=str, default="")
     parser.add_argument("--testdata", type=str, default="")
+    parser.add_argument("--manualdata", type=str, default="")
     args = parser.parse_args()
     return args
 
@@ -112,6 +113,16 @@ def construct_icl_examples(query_id, corpus_idx):
     icl_examples.reverse()
     return icl_examples
 
+def construct_icl_examples_protoblity(): 
+    icl_examples = []
+    with open(f'./data/manual_prompts/{args.manualdata}.json', 'r') as fIn: # mcounterfact_multi   zsre_multi   wfd_multi
+        lines = json.load(fIn)
+        for line in lines[:1]:
+            lang1 = line['new_fact'] if args.lang1 == 'en' else args.lang1
+            icl_examples.append(f"New Fact: {lang1} \nPrompt: {line[args.lang2]} \n\n")
+    icl_examples.reverse()
+    return icl_examples
+
 def wrap_f1em_list(listf1, listem, ans, target):
     single_f1, single_em = obtain_f1_and_em(ans, target)
     listf1.append(single_f1)
@@ -126,7 +137,7 @@ def wrap_ppls_count(edit_ppls, total_cnt, success_cnt, magnitude ):
     return total_cnt, success_cnt, magnitude
 
 def read_corpus_idx(path):
-    with open(f'./data/{path}.json', 'r') as f:
+    with open(f'./data/corpus_idx/{path}.json', 'r') as f:
         demos = json.load(f)
     demos_dict = {entry["query_id"]: entry["corpus_ids"] for entry in demos}
     return demos_dict
@@ -183,7 +194,8 @@ if __name__ == '__main__':
 
         # print("#2")
         icl_examples = construct_icl_examples(i, corpus_idx)
-        icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
+        icl_examples_protoblity = construct_icl_examples_protoblity()
+        # icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
         print(f"icl_examples: {icl_examples}")
         print(f"prompts_truth: {prompts_truth}")
         print(f"prompts_test: {prompts_test}")
@@ -194,7 +206,7 @@ if __name__ == '__main__':
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
             wrap_f1em_list(reliablilty_f1_list, reliablilty_em_list, ans, target_test)
             print(f"ans: {ans}, target_test: {target_test}")
-            
+
             # generalization (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
             wrap_f1em_list(generalization_f1_list, generalization_em_list, ans, target_test)
@@ -204,7 +216,7 @@ if __name__ == '__main__':
             wrap_f1em_list(locality_f1_list, locality_em_list, ans, locality_an)
 
             # portablility (f1em)
-            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}'  )
+            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples_protoblity, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}'  )
             wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, portability_an)
         elif  "MCounter" in args.testdata:
             # reliablilty (ppls)
@@ -223,7 +235,7 @@ if __name__ == '__main__':
             print(f"success_cnt: {success_cnt}, total_cnt {total_cnt}")
 
             # portablility (f1em)
-            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}')
+            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples_protoblity, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}')
             wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, portability_an)
         elif  "WikiFact" in args.testdata:
             # reliablilty (ppls)
@@ -239,7 +251,7 @@ if __name__ == '__main__':
             wrap_f1em_list(locality_f1_list, locality_em_list, ans, locality_an)
 
             # portablility (f1em)
-            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}')
+            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples_protoblity, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}')
             wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, portability_an)
         else:
             print("unvalid test data")

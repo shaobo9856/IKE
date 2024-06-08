@@ -52,7 +52,7 @@ huggingface-cli login --token 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
 
 python icltest.py --lang1 en --lang2 af --tdata mzsre_test_duplicate_ --pdata zsre_multi 
 
-python icl.py --lang1 en --lang2 af --testdata MzsRE/mzsre_test_duplicate_ --indexdata corpus_idx/mzsre_corpus_idx  --traindata MzsRE/zsre_mend_train_ 
+python icl.py --lang1 en --lang2 af  --testdata MzsRE/mzsre_test_duplicate_   --traindata MzsRE/zsre_mend_train_   --indexdata mzsre_corpus_idx  --manualdata zsre_multi
 python icl.py --lang1 en --lang2 af --testdata MCounterFact/mcounterfact_test_ --indexdata zsre_multi  
 python icl.py --lang1 en --lang2 af --testdata WikiFactDiff/wfd_test_ --indexdata zsre_multi  
 
