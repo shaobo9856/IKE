@@ -205,7 +205,7 @@ if __name__ == '__main__':
         # print("#2")
         icl_examples = construct_icl_examples(i, corpus_idx)
         icl_examples_manual = construct_icl_examples_manual()
-        icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
+        # icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
         print(f"icl_examples: {icl_examples}")
         print(f"icl_examples_manual : {icl_examples_manual}")
         print(f"prompts_truth: {prompts_truth}")
