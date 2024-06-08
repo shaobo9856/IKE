@@ -97,7 +97,7 @@ def construct_icl_examples(query_id, corpus_idx):
         demo_ids = corpus_idx[query_id]
         print(demo_ids)
         # 将每个index对应的example加入list
-        for demo_id in demo_ids[:10]:
+        for demo_id in demo_ids[:8]:
             if demo_id not in demos:
                 print(f"Warning: demo_id {demo_id} 不在 demos 中，跳过此条目。")
                 logging.warning(f"demo_id {demo_id} 不在 demos 中，跳过此条目。")
@@ -117,7 +117,7 @@ def construct_icl_examples_manual():
     icl_examples = []
     with open(f'./data/manual_prompts/{args.manualdata}.json', 'r') as fIn: # mcounterfact_multi   zsre_multi   wfd_multi
         lines = json.load(fIn)
-        for line in lines[:10]:
+        for line in lines[:8]:
             lang1 = line['new_fact'] if args.lang1 == 'en' else args.lang1
             icl_examples.append(f"New Fact: {lang1} \nPrompt: {line[args.lang2]} \n\n")
     icl_examples.reverse()
@@ -209,7 +209,7 @@ if __name__ == '__main__':
             print(f"reliablilty ans: {ans}, target_test: {target_test}")
 
             # generalization (f1em)
-            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples_manual, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
+            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
             wrap_f1em_list(generalization_f1_list, generalization_em_list, ans, target_test)
             print(f"generalization ans: {ans}, target_test: {target_test}")
 
