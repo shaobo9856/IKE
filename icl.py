@@ -208,7 +208,7 @@ if __name__ == '__main__':
             print(f"reliablilty ans: {ans}, target_test: {target_test}")
 
             # generalization (f1em)
-            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
+            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples_manual, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
             wrap_f1em_list(generalization_f1_list, generalization_em_list, ans, target_test)
             print(f"generalization ans: {ans}, target_test: {target_test}")
 
