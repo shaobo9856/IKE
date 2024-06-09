@@ -291,7 +291,7 @@ if __name__ == '__main__':
     print("F1EM score")
     if f1r: print("reliablilty_f1: %f   reliablilty_em: %f" % (my_avg(reliablilty_f1_list), my_avg(reliablilty_em_list)))
     if f1g: print("generalization_f1: %f    generalization_em: %f" % (my_avg(generalization_f1_list), my_avg(generalization_em_list)))
-    if f1l: print("locality_f1: %f  locality_em: %f" % (my_avg(locality_f1_list, my_avg(locality_em_list))))
+    if f1l: print("locality_f1: %f  locality_em: %f" % (my_avg(locality_f1_list), my_avg(locality_em_list)))
     if f1p: print("portablility_f1: %f  portablility_em: %f" % (my_avg(portablility_f1_list), my_avg(portablility_em_list)))
 
     print("PPLS score")
