@@ -74,7 +74,7 @@ def parse_args():
     parser = argparse.ArgumentParser(description="In Context Learning for pretrained GPTs")
     parser.add_argument("--lang1", type=str, default="")
     parser.add_argument("--lang2", type=str, default="")
-    parser.add_argument("--pdata", type=str, default="")
+    parser.add_argument("--manualdata", type=str, default="")
     parser.add_argument("--testdata", type=str, default="")
     # parser.add_argument("--lcount", type=int, default=3000)
     args = parser.parse_args()
@@ -85,7 +85,7 @@ model_name = 'meta-llama/Meta-Llama-3-8B'
 
 def construct_icl_examples(): 
     icl_examples = []
-    with open(f'./data/manual_prompts/{args.pdata}.json', 'r') as fIn: # mcounterfact_multi   zsre_multi   wfd_multi
+    with open(f'./data/manual_prompts/{args.manualdata}.json', 'r') as fIn: # mcounterfact_multi   zsre_multi   wfd_multi
         lines = json.load(fIn)
         for line in lines[:8]:
             lang1 = line['new_fact'] if args.lang1 == 'en' else args.lang1
