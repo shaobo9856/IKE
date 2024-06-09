@@ -299,28 +299,28 @@ if __name__ == '__main__':
     if pplg: print("generalization_ppls: %f, magnitude: %f" % (para_success_cnt/para_total_cnt*100, para_magnitude/para_total_cnt*100))
 
 
-# 写入结果到文件
-root_dir = os.path.dirname(os.path.abspath(__file__))
-output_file_name = f'output_{args.testdata}_{args.lang1}{args.lang2}.txt'
-output_file_path = os.path.join(root_dir, output_file_name)
-output_folder = os.path.dirname(output_file_path)
-os.makedirs(output_folder, exist_ok=True)
+    # 写入结果到文件
+    root_dir = os.path.dirname(os.path.abspath(__file__))
+    output_file_name = f'output_{args.testdata}_{args.lang1}{args.lang2}.txt'
+    output_file_path = os.path.join(root_dir, output_file_name)
+    output_folder = os.path.dirname(output_file_path)
+    os.makedirs(output_folder, exist_ok=True)
 
-with open(output_file_path, 'w+') as f:
-    f.write("F1EM score\n")
-    if f1r:
-        f.write(f"reliability_f1: {my_avg(reliablilty_f1_list):.6f}   reliability_em: {my_avg(reliablilty_em_list):.6f}\n")
-    if f1g:
-        f.write(f"generalization_f1: {my_avg(generalization_f1_list):.6f}   generalization_em: {my_avg(generalization_em_list):.6f}\n")
-    if f1l:
-        f.write(f"locality_f1: {my_avg(locality_f1_list):.6f}   locality_em: {my_avg(locality_em_list):.6f}\n")
-    if f1p:
-        f.write(f"portability_f1: {my_avg(portablility_f1_list):.6f}   portability_em: {my_avg(portablility_em_list):.6f}\n")
-    
-    f.write("\nPPLS score\n")
-    if pplr and orig_total_cnt != 0:
-        f.write(f"reliability_ppls: {orig_success_cnt/orig_total_cnt*100:.6f}, magnitude: {orig_magnitude/orig_total_cnt*100:.6f}\n")
-    if ppll and total_cnt != 0:
-        f.write(f"locality_ppls: {success_cnt/total_cnt*100:.6f}, magnitude: {magnitude/total_cnt*100:.6f}\n")
-    if pplg and para_total_cnt != 0:
-        f.write(f"generalization_ppls: {para_success_cnt/para_total_cnt*100:.6f}, magnitude: {para_magnitude/para_total_cnt*100:.6f}\n")
+    with open(output_file_path, 'w+') as f:
+        f.write("F1EM score\n")
+        if f1r:
+            f.write(f"reliability_f1: {my_avg(reliablilty_f1_list):.6f}   reliability_em: {my_avg(reliablilty_em_list):.6f}\n")
+        if f1g:
+            f.write(f"generalization_f1: {my_avg(generalization_f1_list):.6f}   generalization_em: {my_avg(generalization_em_list):.6f}\n")
+        if f1l:
+            f.write(f"locality_f1: {my_avg(locality_f1_list):.6f}   locality_em: {my_avg(locality_em_list):.6f}\n")
+        if f1p:
+            f.write(f"portability_f1: {my_avg(portablility_f1_list):.6f}   portability_em: {my_avg(portablility_em_list):.6f}\n")
+        
+        f.write("\nPPLS score\n")
+        if pplr and orig_total_cnt != 0:
+            f.write(f"reliability_ppls: {orig_success_cnt/orig_total_cnt*100:.6f}, magnitude: {orig_magnitude/orig_total_cnt*100:.6f}\n")
+        if ppll and total_cnt != 0:
+            f.write(f"locality_ppls: {success_cnt/total_cnt*100:.6f}, magnitude: {magnitude/total_cnt*100:.6f}\n")
+        if pplg and para_total_cnt != 0:
+            f.write(f"generalization_ppls: {para_success_cnt/para_total_cnt*100:.6f}, magnitude: {para_magnitude/para_total_cnt*100:.6f}\n")
