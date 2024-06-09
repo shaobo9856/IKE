@@ -1,4 +1,5 @@
 import torch
+import vllm
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers import set_seed
 import json
@@ -46,7 +47,8 @@ def icl_lm_eval_f1em(model, tokenizer, icl_examples, target, x):
     encodings = tokenizer(''.join(icl_examples) + f'{x} {target}', return_tensors='pt',max_length=1520) # few shot  -> zero shot: ''.join(icl_examples) + 
     input_ids = encodings['input_ids'].to(device)
     attention_mask = encodings['attention_mask'].to(device)
-    logits = model(input_ids=input_ids, attention_mask=attention_mask).logits
+    # logits = model(input_ids=input_ids, attention_mask=attention_mask).logits
+    logits = model.generate(input_ids=input_ids, attention_mask=attention_mask).logits
     ans = torch.argmax(logits, dim=-1)[:,-target_ids.size(1):-1].squeeze()
     target_ids = target_ids[:,1:]
     
