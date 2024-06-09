@@ -98,7 +98,7 @@ def construct_icl_examples(query_id, corpus_idx):
     if query_id in corpus_idx:
         # 获取对应的idxs
         demo_ids = corpus_idx[query_id]
-        print(demo_ids)
+        # print(demo_ids)
         # 将每个index对应的example加入list
         for demo_id, o in zip(demo_ids[:8], order[:8]):
             if demo_id not in demos:
@@ -210,22 +210,22 @@ if __name__ == '__main__':
         icl_examples = construct_icl_examples(i, corpus_idx)
         icl_examples_manual = construct_icl_examples_manual()
         # icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
-        print(f"icl_examples: {icl_examples}")
-        print(f"icl_examples_manual : {icl_examples_manual}")
-        print(f"prompts_truth: {prompts_truth}")
-        print(f"prompts_test: {prompts_test}")
-        print(f"target_test: {target_test}")
+        # print(f"icl_examples: {icl_examples}")
+        # print(f"icl_examples_manual : {icl_examples_manual}")
+        # print(f"prompts_truth: {prompts_truth}")
+        # print(f"prompts_test: {prompts_test}")
+        # print(f"target_test: {target_test}")
 
         if "MzsRE" in args.testdata:
             # reliablilty (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
             wrap_f1em_list(reliablilty_f1_list, reliablilty_em_list, ans, target_test)
-            print(f"reliablilty ans: {ans}, target_test: {target_test}")
+            # print(f"reliablilty ans: {ans}, target_test: {target_test}")
 
             # generalization (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
             wrap_f1em_list(generalization_f1_list, generalization_em_list, ans, target_test)
-            print(f"generalization ans: {ans}, target_test: {target_test}")
+            # print(f"generalization ans: {ans}, target_test: {target_test}")
 
             # locality (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, locality_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {locality_prompt}' )
@@ -234,15 +234,15 @@ if __name__ == '__main__':
             # portablility (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples_manual, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}'  )
             wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, portability_an)
-            print(f"portablility ans: {ans}, target_test: {portability_an}")
+            # print(f"portablility ans: {ans}, target_test: {portability_an}")
 
             f1r,f1g,f1l,f1p,emr,emg,eml,emp = True,True,True,True,True,True,True,True
         elif  "MCounter" in args.testdata:
             # reliablilty (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, locality_an], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
             orig_total_cnt, orig_success_cnt, orig_magnitude = wrap_ppls_count(edit_ppls, orig_total_cnt, orig_success_cnt, orig_magnitude)
-            print(f"orig_total_cnt: {orig_total_cnt}")
-            print(f"orig_success_cnt: {orig_success_cnt}")
+            # print(f"orig_total_cnt: {orig_total_cnt}")
+            # print(f"orig_success_cnt: {orig_success_cnt}")
 
             # generalization (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, locality_an], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
@@ -251,12 +251,12 @@ if __name__ == '__main__':
             # locality (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [locality_an, target_test, ], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {locality_prompt}')
             total_cnt, success_cnt, magnitude = wrap_ppls_count(edit_ppls, total_cnt, success_cnt, magnitude)
-            print(f"prompts_truth {prompts_truth}")
-            print(f"target_truth {target_truth}")
-            print(f"locality_prompt {locality_prompt}")
-            print(f"target_test {target_test}")
-            print(f"locality_an {locality_an}")
-            print(f"success_cnt: {success_cnt}, total_cnt {total_cnt}")
+            # print(f"prompts_truth {prompts_truth}")
+            # print(f"target_truth {target_truth}")
+            # print(f"locality_prompt {locality_prompt}")
+            # print(f"target_test {target_test}")
+            # print(f"locality_an {locality_an}")
+            # print(f"success_cnt: {success_cnt}, total_cnt {total_cnt}")
 
             # portablility (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples_manual, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}')
