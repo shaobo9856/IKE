@@ -75,7 +75,8 @@ def parse_args():
     parser.add_argument("--lang1", type=str, default="")
     parser.add_argument("--lang2", type=str, default="")
     parser.add_argument("--pdata", type=str, default="")
-    parser.add_argument("--tdata", type=str, default="")
+    parser.add_argument("--testdata", type=str, default="")
+    # parser.add_argument("--lcount", type=int, default=3000)
     args = parser.parse_args()
     return args
 
@@ -113,7 +114,7 @@ if __name__ == '__main__':
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     lines = []
-    with open(f'./data/{args.tdata}{args.lang1}{args.lang2}.json', 'r') as f:
+    with open(f'./data/{args.testdata}{args.lang1}{args.lang2}.json', 'r') as f:
         lines = json.load(f)
     icl_examples = []
     success_cnt = 0
@@ -161,7 +162,7 @@ if __name__ == '__main__':
 
         # icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
 
-        if "MzsRE" in args.tdata:
+        if "MzsRE" in args.testdata:
             # reliablilty (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, target_test, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
             wrap_f1em_list(reliablilty_f1_list, reliablilty_em_list, ans, target_test)
@@ -179,7 +180,7 @@ if __name__ == '__main__':
             wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, portability_an)
 
             f1r,f1g,f1l,f1p = True,True,True,True
-        elif  "MCounter" in args.tdata:
+        elif  "MCounter" in args.testdata:
             # reliablilty (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, locality_an], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
             orig_total_cnt, orig_success_cnt, orig_magnitude = wrap_ppls_count(edit_ppls, orig_total_cnt, orig_success_cnt, orig_magnitude)
@@ -198,7 +199,7 @@ if __name__ == '__main__':
             wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, portability_an)
 
             f1p,pplr,pplg,ppll = True,True,True,True
-        elif  "WikiFact" in args.tdata:
+        elif  "WikiFact" in args.testdata:
             # reliablilty (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, locality_an], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
             orig_total_cnt, orig_success_cnt, orig_magnitude = wrap_ppls_count(edit_ppls, orig_total_cnt, orig_success_cnt, orig_magnitude)
