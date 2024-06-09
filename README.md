@@ -52,9 +52,9 @@ huggingface-cli login --token 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
 
 python icltest.py --lang1 en --lang2 af --tdata mzsre_test_duplicate_ --pdata zsre_multi 
 
-python icl.py --lang1 en --lang2 af --tdata MzsRE/mzsre_test_duplicate_ --pdata zsre_multi 
-python icl.py --lang1 en --lang2 af --tdata MCounterFact/mcounterfact_test_ --pdata zsre_multi  
-python icl.py --lang1 en --lang2 af --tdata WikiFactDiff/wfd_test_ --pdata zsre_multi  
+python icl.py --lang1 en --lang2 af --testdata MzsRE/mzsre_test_duplicate_ --pdata zsre_multi 
+python icl.py --lang1 en --lang2 af --testdata MCounterFact/mcounterfact_test_ --pdata zsre_multi  
+python icl.py --lang1 en --lang2 af --testdata WikiFactDiff/wfd_test_ --pdata zsre_multi  
 
 chmod +x run_icls.sh
 ./run_icls.sh
