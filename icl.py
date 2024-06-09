@@ -81,6 +81,7 @@ def parse_args():
     parser.add_argument("--traindata", type=str, default="")
     parser.add_argument("--testdata", type=str, default="")
     parser.add_argument("--manualdata", type=str, default="")
+    parser.add_argument("--lcount", type=int, default=3000)
     args = parser.parse_args()
     return args
 
@@ -191,7 +192,7 @@ if __name__ == '__main__':
     corpus_idx = read_corpus_idx(args.indexdata) 
 
     example_idx = 0
-    for i, line in enumerate(tqdm(lines[:5], total=len(lines[:30]), desc="Processing lines")):
+    for i, line in enumerate(tqdm(lines[:args.lcount], total=len(lines[:args.lcount]), desc="Processing lines")):
         subject = line[args.lang1]['subject']
         prompts_truth = line[args.lang1]['src']
         prompts_test = line[args.lang2]['src']

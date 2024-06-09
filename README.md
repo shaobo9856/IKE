@@ -14,11 +14,11 @@ python -m pip install huggingface_hub
 
 huggingface-cli login --token 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
 
-python icl.py --lang1 en --lang2 af  --testdata MzsRE/mzsre_test_duplicate_   --traindata MzsRE/zsre_mend_train_   --indexdata mzsre_corpus_idx  --manualdata zsre_multi
+python icl.py --lang1 en --lang2 af  --testdata MzsRE/mzsre_test_duplicate_   --traindata MzsRE/zsre_mend_train_   --indexdata mzsre_corpus_idx  --manualdata zsre_multi --lcount 10
 
-python icl.py --lang1 en --lang2 af --testdata MCounterFact/mcounterfact_test_ --traindata MzsRE/zsre_mend_train_   --indexdata mzsre_corpus_idx  --manualdata zsre_multi
+python icl.py --lang1 en --lang2 af --testdata MCounterFact/mcounterfact_test_ --traindata MzsRE/zsre_mend_train_   --indexdata mzsre_corpus_idx  --manualdata zsre_multi --lcount 10
 
-python icl.py --lang1 en --lang2 af --testdata WikiFactDiff/wfd_test_ --traindata MzsRE/zsre_mend_train_   --indexdata mzsre_corpus_idx  --manualdata zsre_multi
+python icl.py --lang1 en --lang2 af --testdata WikiFactDiff/wfd_test_ --traindata MzsRE/zsre_mend_train_   --indexdata mzsre_corpus_idx  --manualdata zsre_multi    --lcount 10
 
 chmod +x run_icls.sh
 ./run_icls.sh
