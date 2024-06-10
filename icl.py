@@ -218,7 +218,7 @@ if __name__ == '__main__':
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}')
             wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, portability_an)
 
-            f1l,f1p,pplr,pplg = False,False,False,False        
+            f1l,f1p,pplr,pplg = True,True,True,True
         else:
             print("unvalid test data")
 
