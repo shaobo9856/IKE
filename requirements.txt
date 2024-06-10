@@ -27,11 +27,11 @@ sentence-transformers==3.0.0
 sympy==1.12.1
 threadpoolctl==3.5.0
 tokenizers==0.19.1
-torch
-torchvision
+torch==2.0.1
+torchvision==0.15.2
 tqdm==4.56.0
 transformers==4.41.1
-triton>=2.0.0
+triton==2.0.0
 typer==0.4.2
 types-pytz==2024.1.0.20240417
 typing_extensions==4.12.0
