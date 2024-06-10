@@ -60,6 +60,10 @@ chmod +x run_icls.sh
 ./run_icls.sh
 
 
+如果运行 prompt baseline：
+添加 --pbase 即可
+
+
 encode_facts.py：  这段代码的主要目的是读取 counterfact.json 文件中的数据，生成一系列句子并使用 SentenceTransformer 模型将这些句子转换为句子嵌入，然后将这些嵌入存储到一个 pickle 文件中以便后续使用。
 
 semantic_search.py： 将先前生成的句子嵌入分成查询集和语料库集，并使用 SentenceTransformer 进行语义搜索。它输出每个查询的最相似的句子的 ID。 保存到corpus_idx.txt文件
