@@ -194,7 +194,7 @@ if __name__ == '__main__':
     args = parse_args()
     # model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
     model = LLM(model=model_name, trust_remote_code=True, gpu_memory_utilization=0.9, tensor_parallel_size=4)
-    # model.eval()
+    model.eval()
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
     lines = []
