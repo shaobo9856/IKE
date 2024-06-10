@@ -1,5 +1,5 @@
 import torch
-from vllm import LLM, SamplingParams
+# from vllm import LLM, SamplingParams
 from transformers import AutoModelForCausalLM, AutoTokenizer
 from transformers import set_seed
 import json
