@@ -39,3 +39,4 @@ tzdata==2024.1
 urllib3==2.2.1
 wasabi==0.10.1
 huggingface-hub
+vllm
