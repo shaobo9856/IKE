@@ -117,7 +117,7 @@ def parse_args():
     parser.add_argument("--traindata", type=str, default="")
     parser.add_argument("--testdata", type=str, default="")
     parser.add_argument("--manualdata", type=str, default="")
-    parser.add_argument("--lcount", type=int, default=3000)
+    parser.add_argument("--lcount", type=int, default=30000)
     args = parser.parse_args()
     return args
 
