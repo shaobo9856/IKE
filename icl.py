@@ -125,12 +125,15 @@ device = 'cuda'
 model_name = 'meta-llama/Meta-Llama-3-8B'
 
 def construct_icl_examples(query_id, corpus_idx):
-    order = [2, 1, 2, 0, 1, 2, 2, 0, 2, 2, 1, 0, 2, 1, 2, 0, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2]
+    order = [2, 1, 2, 0, 1, 1, 2, 0, 2, 2, 1, 0, 2, 1, 2, 0, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2]    
     random.shuffle(order)
     icl_examples = []
     with open(f'./data/{args.traindata}{args.lang2}.json', 'r') as fIn: # mcounterfact_multi   zsre_multi   wfd_multi
         lines = json.load(fIn)
-        demos = {entry["case_id"]: entry for entry in lines}
+        if 'WikiFac' in args.testdata:
+            demos = {entry[args.lang1]["case_id"]: entry for entry in lines}
+        else:
+            demos = {entry["case_id"]: entry for entry in lines}
     if query_id in corpus_idx:
         # 获取对应的idxs
         demo_ids = corpus_idx[query_id]
@@ -142,8 +145,12 @@ def construct_icl_examples(query_id, corpus_idx):
                 logging.warning(f"demo_id {demo_id} 不在 demos 中，跳过此条目。")
                 continue
             line = demos[demo_id]
-            new_fact = line['src']
-            target_new = line['alt']
+            if 'WikiFac' in args.testdata:
+                new_fact = line[args.lang1]['src']
+                target_new = line[args.lang1]['alt']
+            else:
+                new_fact = line['src']
+                target_new = line['alt']
             prompt = line[args.lang2]['src']
             target_test = line[args.lang2]['alt'] 
             rephrase_prompt = line[args.lang2]['rephrase']
@@ -156,7 +163,7 @@ def construct_icl_examples(query_id, corpus_idx):
             elif o == 2: # retain
                 icl_examples.append(f'New Fact: {new_fact} {target_new}\nPrompt: {locality_prompt} {locality_an}\n\n')
     else:
-        print("query_id not found")
+        print(f"query_id {query_id} not found")
     icl_examples.reverse()
     return icl_examples
 
@@ -164,7 +171,7 @@ def construct_icl_examples_manual():
     icl_examples = []
     with open(f'./data/manual_prompts/{args.manualdata}.json', 'r') as fIn: # mcounterfact_multi   zsre_multi   wfd_multi
         lines = json.load(fIn)
-        for line in lines[:8]:
+        for line in lines[6:8]:
             lang1 = line['new_fact'] if args.lang1 == 'en' else args.lang1
             icl_examples.append(f"New Fact: {lang1} \nPrompt: {line[args.lang2]} \n\n")
     icl_examples.reverse()
@@ -230,6 +237,8 @@ if __name__ == '__main__':
 
     example_idx = 0
     for i, line in enumerate(tqdm(lines[:args.lcount], total=len(lines[:args.lcount]), desc="Processing lines")):
+        case_id = line[args.lang1]['case_id'] if 'case_id' in line[args.lang1] else i
+
         subject = line[args.lang1]['subject']
         prompts_truth = line[args.lang1]['src']
         prompts_test = line[args.lang2]['src']
@@ -244,8 +253,7 @@ if __name__ == '__main__':
         portability_an = line[args.lang2]['portability']['New Answer'] 
 
         # print("#2")
-        icl_examples = construct_icl_examples(i, corpus_idx)
-        icl_examples_manual = construct_icl_examples_manual()
+        icl_examples = construct_icl_examples(case_id, corpus_idx) + construct_icl_examples_manual()
         # icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
         # print(f"icl_examples: {icl_examples}")
         # print(f"icl_examples_manual : {icl_examples_manual}")
@@ -269,7 +277,7 @@ if __name__ == '__main__':
             wrap_f1em_list(locality_f1_list, locality_em_list, ans, locality_an)
 
             # portablility (f1em)
-            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples_manual, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}'  )
+            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}'  )
             wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, portability_an)
             # print(f"portablility ans: {ans}, target_test: {portability_an}")
 
@@ -296,7 +304,7 @@ if __name__ == '__main__':
             # print(f"success_cnt: {success_cnt}, total_cnt {total_cnt}")
 
             # portablility (f1em)
-            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples_manual, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}')
+            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}')
             wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, portability_an)
 
             f1p,emp,pplr,pplg,ppll = True,True,True,True,True
@@ -314,10 +322,10 @@ if __name__ == '__main__':
             wrap_f1em_list(locality_f1_list, locality_em_list, ans, locality_an)
 
             # portablility (f1em)
-            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples_manual, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}')
+            ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}')
             wrap_f1em_list(portablility_f1_list, portablility_em_list, ans, portability_an)
 
-            f1l,f1p,eml,emp,pplr,pplg = False,False,False,False,False,False
+            f1l,f1p,eml,emp,pplr,pplg = True,True,True,True,True,True
         else:
             print("unvalid test data")
 
