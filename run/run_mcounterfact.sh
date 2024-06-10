@@ -6,5 +6,5 @@ CUDA=1
 for LANG in "${LANGS[@]}";
 do
     echo "currently processing languag: $LANG"
-    CUDA_VISIBLE_DEVICES=$CUDA python icl.py --lang1 en --lang2 $LANG --testdata MCounterFact/mcounterfact_test_ --traindata MCounterFact/counterfact-train_ --indexdata mcounterfact_corpus_idx --manualdata mcounterfact_multi
+    CUDA_VISIBLE_DEVICES=$CUDA python icl.py --lang1 en --lang2 $LANG --testdata MCounterFact/mcounterfact_test_ --traindata MCounterFact/counterfact-train_ --indexdata mcounterfact_corpus_idx --manualdata mcounterfact_multi  --lcount 10000
 done
