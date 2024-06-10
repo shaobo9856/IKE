@@ -47,8 +47,8 @@ def icl_lm_eval_f1em(model, tokenizer, icl_examples, target, x):
     encodings = tokenizer(''.join(icl_examples) + f'{x} {target}', return_tensors='pt',max_length=1520) # few shot  -> zero shot: ''.join(icl_examples) + 
     input_ids = encodings['input_ids'].to(device)
     attention_mask = encodings['attention_mask'].to(device)
-    # logits = model(input_ids=input_ids, attention_mask=attention_mask).logits
-    logits = model.generate(input_ids=input_ids, attention_mask=attention_mask).logits
+    logits = model(input_ids=input_ids, attention_mask=attention_mask).logits
+    # logits = model.generate(input_ids=input_ids, attention_mask=attention_mask).logits
     ans = torch.argmax(logits, dim=-1)[:,-target_ids.size(1):-1].squeeze()
     target_ids = target_ids[:,1:]
     
@@ -60,54 +60,54 @@ def icl_lm_eval_f1em(model, tokenizer, icl_examples, target, x):
     textual_ans = tokenizer.decode(ans_idss, skip_special_tokens=True)
     return textual_ans
 
-# def icl_lm_eval_ppls(model, tokenizer, icl_examples, targets, x):
-#     device = torch.device(f'cuda:0')
-#     ppls = [] 
-#     for target in targets:
-#         tgt_len = len(tokenizer.encode(' ' + target))
-#         encodings = tokenizer(''.join(icl_examples) + f'{x} {target}', return_tensors='pt')
-#         input_ids = encodings['input_ids'].to(device)
-#         target_ids = input_ids.clone()
-#         target_ids[:, :-tgt_len] = -100
-#         with torch.no_grad():
-#             outputs = model(input_ids, labels=target_ids)
-#             ppl = torch.exp(outputs.loss)
-#             ppls.append(ppl.item())
-#     return ppls
-
-
 def icl_lm_eval_ppls(model, tokenizer, icl_examples, targets, x):
-    device = torch.device('cuda:0')
-    ppls = []
-    
-    # Encode icl_examples and input x together
-    icl_input = ''.join(icl_examples) + x
-    icl_input_ids = tokenizer(icl_input, return_tensors='pt', truncation=True, max_length=1520)['input_ids'].to(device)
-    
+    device = torch.device(f'cuda:0')
+    ppls = [] 
     for target in targets:
         tgt_len = len(tokenizer.encode(' ' + target))
-        target_input = tokenizer(target, return_tensors='pt')['input_ids'].to(device)
-        
-        # Concatenate icl_input_ids with target_input_ids
-        input_ids = torch.cat([icl_input_ids, target_input], dim=1).to(device)
-        
-        # Create target_ids for calculating loss
+        encodings = tokenizer(''.join(icl_examples) + f'{x} {target}', return_tensors='pt')
+        input_ids = encodings['input_ids'].to(device)
         target_ids = input_ids.clone()
         target_ids[:, :-tgt_len] = -100
-        
         with torch.no_grad():
-            outputs = model(input_ids=input_ids)
-            logits = outputs.logits
-            
-            # Compute the log likelihood of the target sequence
-            shift_logits = logits[..., :-1, :].contiguous()
-            shift_labels = target_ids[..., 1:].contiguous()
-            loss_fct = torch.nn.CrossEntropyLoss(ignore_index=-100)
-            loss = loss_fct(shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1))
-            ppl = torch.exp(loss)
+            outputs = model(input_ids, labels=target_ids)
+            ppl = torch.exp(outputs.loss)
             ppls.append(ppl.item())
-    
     return ppls
+
+
+# def icl_lm_eval_ppls(model, tokenizer, icl_examples, targets, x):
+#     device = torch.device('cuda:0')
+#     ppls = []
+    
+#     # Encode icl_examples and input x together
+#     icl_input = ''.join(icl_examples) + x
+#     icl_input_ids = tokenizer(icl_input, return_tensors='pt', truncation=True, max_length=1520)['input_ids'].to(device)
+    
+#     for target in targets:
+#         tgt_len = len(tokenizer.encode(' ' + target))
+#         target_input = tokenizer(target, return_tensors='pt')['input_ids'].to(device)
+        
+#         # Concatenate icl_input_ids with target_input_ids
+#         input_ids = torch.cat([icl_input_ids, target_input], dim=1).to(device)
+        
+#         # Create target_ids for calculating loss
+#         target_ids = input_ids.clone()
+#         target_ids[:, :-tgt_len] = -100
+        
+#         with torch.no_grad():
+#             outputs = model(input_ids=input_ids)
+#             logits = outputs.logits
+            
+#             # Compute the log likelihood of the target sequence
+#             shift_logits = logits[..., :-1, :].contiguous()
+#             shift_labels = target_ids[..., 1:].contiguous()
+#             loss_fct = torch.nn.CrossEntropyLoss(ignore_index=-100)
+#             loss = loss_fct(shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1))
+#             ppl = torch.exp(loss)
+#             ppls.append(ppl.item())
+    
+#     return ppls
 
 def parse_args():
     parser = argparse.ArgumentParser(description="In Context Learning for pretrained GPTs")
@@ -192,8 +192,8 @@ def read_corpus_idx(path):
 if __name__ == '__main__':
     device = torch.device(f'cuda:0')
     args = parse_args()
-    # model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
-    model = LLM(model=model_name, trust_remote_code=True, gpu_memory_utilization=0.9, tensor_parallel_size=4)
+    model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
+    # model = LLM(model=model_name, trust_remote_code=True, gpu_memory_utilization=0.9, tensor_parallel_size=4)
     model.eval()
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
