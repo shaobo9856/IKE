@@ -1,5 +1,6 @@
-# IKE
-Source code for "Can We Edit Factual Knowledge by In-Context Learning?"
+# BMIKE-53
+Source code for "BMIKE-53: Investigating Cross-Lingual Knowledge Editing withIn-Context Learning"
+
 ## Overview
 
 ### Run command

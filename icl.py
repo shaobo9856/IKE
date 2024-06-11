@@ -88,7 +88,9 @@ def construct_icl_examples():
     icl_examples = []
     with open(f'./data/manual_prompts/{args.manualdata}.json', 'r') as fIn: # mcounterfact_multi   zsre_multi   wfd_multi
         lines = json.load(fIn)
-        for line in lines[:8]:
+        update_lines = [line for line in lines if line["type"] == "update"]
+
+        for line in lines[:4]:
             lang1 = line['new_fact'] if args.lang1 == 'en' else args.lang1
             icl_examples.append(f"New Fact: {lang1} \nPrompt: {line[args.lang2]} \n\n")
     icl_examples.reverse()
