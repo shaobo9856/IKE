@@ -1,6 +1,39 @@
 # IKE
 Source code for "Can We Edit Factual Knowledge by In-Context Learning?"
 ## Overview
+
+### Run command
+
+git clone https://github.com/shaobo9856/IKE ike
+
+cd ike && git checkout manual && python3 -m venv ike && source ike/bin/activate && pip install -r requirements.txt
+
+pip install --upgrade sentence-transformers
+
+python -m pip install huggingface_hub
+
+huggingface-cli login --token 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
+
+python icltest.py --lang1 en --lang2 af --tdata mzsre_test_duplicate_ --pdata zsre_multi 
+
+python icl.py --lang1 en --lang2 af --testdata MzsRE/mzsre_test_duplicate_ --manualdata zsre_multi --lcount 10
+python icl.py --lang1 en --lang2 af --testdata MCounterFact/mcounterfact_test_ --manualdata zsre_multi  --lcount 10
+python icl.py --lang1 en --lang2 af --testdata WikiFactDiff/wfd_test_ --manualdata zsre_multi  --lcount 10
+
+chmod +x run_icls.sh
+./run_icls.sh
+
+
+如果运行 prompt baseline：
+添加 --pbase 即可
+
+
+encode_facts.py：  这段代码的主要目的是读取 counterfact.json 文件中的数据，生成一系列句子并使用 SentenceTransformer 模型将这些句子转换为句子嵌入，然后将这些嵌入存储到一个 pickle 文件中以便后续使用。
+
+semantic_search.py： 将先前生成的句子嵌入分成查询集和语料库集，并使用 SentenceTransformer 进行语义搜索。它输出每个查询的最相似的句子的 ID。 保存到corpus_idx.txt文件
+
+
+
 ## Requirements
 ```
 jsonlines==3.1.0
@@ -37,44 +70,5 @@ You can evaluate IKE based on different LLMs by specifying the model name of LLM
 python icl.py --model_name [model name]
 ```
 The model name can be `['gpt2-xl', 'EleutherAI/gpt-neo-1.3B', 'EleutherAI/gpt-j-6B', 'EleutherAI/gpt-neox-20b']`
-
-### Contrastive Knowledge Assessment
-
-git clone https://github.com/shaobo9856/IKE ike
-
-cd ike && git checkout manual && python3 -m venv ike && source ike/bin/activate && pip install -r requirements.txt
-
-pip install --upgrade sentence-transformers
-
-python -m pip install huggingface_hub
-
-huggingface-cli login --token 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
-
-python icltest.py --lang1 en --lang2 af --tdata mzsre_test_duplicate_ --pdata zsre_multi 
-
-python icl.py --lang1 en --lang2 af --testdata MzsRE/mzsre_test_duplicate_ --manualdata zsre_multi --lcount 10
-python icl.py --lang1 en --lang2 af --testdata MCounterFact/mcounterfact_test_ --manualdata zsre_multi  --lcount 10
-python icl.py --lang1 en --lang2 af --testdata WikiFactDiff/wfd_test_ --manualdata zsre_multi  --lcount 10
-
-chmod +x run_icls.sh
-./run_icls.sh
-
-
-如果运行 prompt baseline：
-添加 --pbase 即可
-
-
-encode_facts.py：  这段代码的主要目的是读取 counterfact.json 文件中的数据，生成一系列句子并使用 SentenceTransformer 模型将这些句子转换为句子嵌入，然后将这些嵌入存储到一个 pickle 文件中以便后续使用。
-
-semantic_search.py： 将先前生成的句子嵌入分成查询集和语料库集，并使用 SentenceTransformer 进行语义搜索。它输出每个查询的最相似的句子的 ID。 保存到corpus_idx.txt文件
-
-
-
-
-
-
-
-
-
 
 
