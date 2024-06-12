@@ -24,7 +24,7 @@ python icl.py --lang1 en --lang2 af --testdata WikiFactDiff/wfd_test_ --manualda
 chmod +x run_icls.sh
 ./run_icls.sh
 
-CUDA_VISIBLE_DEVICES=0
+CUDA_VISIBLE_DEVICES=0  python icl.py --lang1 en --lang2 af --testdata MzsRE/mzsre_test_duplicate_ --manualdata zsre_multi --lcount 10
 
 如果运行 prompt baseline：
 添加 --pbase 即可
