@@ -90,7 +90,7 @@ def construct_icl_examples():
         lines = json.load(fIn)
         update_lines = [line for line in lines if line["type"] == "update"]
 
-        for line in lines[:4]:
+        for line in update_lines[:4]:
             lang1 = line['new_fact'] if args.lang1 == 'en' else args.lang1
             icl_examples.append(f"New Fact: {lang1} \nPrompt: {line[args.lang2]} \n\n")
     icl_examples.reverse()
