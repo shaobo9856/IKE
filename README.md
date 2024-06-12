@@ -21,8 +21,9 @@ python icl.py --lang1 en --lang2 af --testdata MzsRE/mzsre_test_duplicate_ --man
 python icl.py --lang1 en --lang2 af --testdata MCounterFact/mcounterfact_test_ --manualdata zsre_multi  --lcount 10
 python icl.py --lang1 en --lang2 af --testdata WikiFactDiff/wfd_test_ --manualdata zsre_multi  --lcount 10
 
-chmod +x run_icls.sh
-./run_icls.sh
+chmod +x run_manual_ab.sh
+./run_manual_ab.sh
+
 
 CUDA_VISIBLE_DEVICES=0  python icl.py --lang1 en --lang2 af --testdata MzsRE/mzsre_test_duplicate_ --manualdata zsre_multi --lcount 10
 
