@@ -84,16 +84,41 @@ def parse_args():
 device = 'cuda'
 model_name = 'meta-llama/Meta-Llama-3-8B'
 
+# def construct_icl_examples(): 
+#     icl_examples = []
+#     with open(f'./data/manual_prompts/{args.manualdata}.json', 'r') as fIn: # mcounterfact_multi   zsre_multi   wfd_multi
+#         lines = json.load(fIn)
+#         update_lines = [line for line in lines if line["type"] == "portability"]
+
+#         for line in update_lines[:4]:
+#             lang1 = line['new_fact'] if args.lang1 == 'en' else args.lang1
+#             icl_examples.append(f"New Fact: {lang1} \nPrompt: {line[args.lang2]} \n\n")
+#     icl_examples.reverse()
+#     return icl_examples
+
+
+#   icl_examples(2c + 2u + 2 r + 2p,  random order)									
 def construct_icl_examples(): 
     icl_examples = []
     with open(f'./data/manual_prompts/{args.manualdata}.json', 'r') as fIn: # mcounterfact_multi   zsre_multi   wfd_multi
         lines = json.load(fIn)
-        update_lines = [line for line in lines if line["type"] == "update"]
 
-        for line in update_lines[:4]:
+        # 筛选不同类型的数据
+        copy_lines = [line for line in lines if line["type"] == "copy"]
+        update_lines = [line for line in lines if line["type"] == "update"]
+        retain_lines = [line for line in lines if line["type"] == "retain"]
+        portability_lines = [line for line in lines if line["type"] == "portability"]
+
+        # 选择每种类型的前2个
+        selected_lines = (copy_lines[:2] + update_lines[:2] + retain_lines[:2] + portability_lines[:2])
+
+        # 构建icl_examples
+        for line in selected_lines:
             lang1 = line['new_fact'] if args.lang1 == 'en' else args.lang1
             icl_examples.append(f"New Fact: {lang1} \nPrompt: {line[args.lang2]} \n\n")
-    icl_examples.reverse()
+        
+        # 打乱顺序
+        random.shuffle(icl_examples)
     return icl_examples
 
 def wrap_f1em_list(listf1, listem, ans, target):

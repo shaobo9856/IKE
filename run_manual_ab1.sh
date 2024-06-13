@@ -1,7 +1,7 @@
 #!/bin/bash
 
-LANGS=("fr" "nl" "es" "vi" "hu" "tr" "ca" "ja" "ru" "zh-cn")
-CUDA=0
+LANGS=("es" "vi" "ru" "zh-cn") # "fr" "nl" "hu" "tr" "ca" "ja" 
+CUDA=1
 
 # run zsre
 for LANG in "${LANGS[@]}";
