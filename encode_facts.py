@@ -22,9 +22,9 @@ for i, line in enumerate(lines):
     subjects.append(subject)
     for p in paraphrases:
         if i> 2000:
-            sentences.append(f"New Fact: {new_fact}\nPrompt: {p} {target_new}") # 2000个后作为corpus_embeddings，作为语料库。
+            sentences.append(f"New Fact: {new_fact}\nPrompt: {p} {target_new}") 
         else:
-            sentences.append(f"New Fact: {new_fact}\nPrompt: {p}") # 前2000个作为query_embeddings，作为查询。
+            sentences.append(f"New Fact: {new_fact}\nPrompt: {p}") 
         subjects.append(subject)
     for n in neighbors:
         if i > 2000:

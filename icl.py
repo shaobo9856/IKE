@@ -27,11 +27,11 @@ with open('corpus_idx.txt', 'r') as fIn:
     
     corpus_idx = [[int(idx) for idx in line.split()] for line in lines]
 
-def construct_icl_examples(idx, demos): # idx为前2000条的每一个index， demos为counterfact.json中2000条后
-    order = [2, 1, 2, 0, 1, 2, 2, 0, 2, 2, 1, 0, 2, 1, 2, 0, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2] #32 个元素。
+def construct_icl_examples(idx, demos):
+    order = [2, 1, 2, 0, 1, 2, 2, 0, 2, 2, 1, 0, 2, 1, 2, 0, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2, 1, 2]
     random.shuffle(order)
     icl_examples = []
-    demo_ids = corpus_idx[idx] # 获取对应idx的最相似的32条
+    demo_ids = corpus_idx[idx] 
     demo_ids = demo_ids[:len(order)]
     for demo_id, o in zip(demo_ids, order):
         line = demos[demo_id-2000]
@@ -107,7 +107,7 @@ if __name__ == '__main__':
 
     # icl_cnt = 0
     example_idx = 0
-    for i, line in enumerate(lines): # 前2000条
+    for i, line in enumerate(lines):
 
         if i % 10 == 0:
             print(i, success_cnt, total_cnt, magnitude / (total_cnt + 1e-12), para_success_cnt, para_magnitude / (para_total_cnt + 1e-12), orig_success_cnt ,orig_magnitude / (i + 1e-12))
@@ -130,10 +130,9 @@ if __name__ == '__main__':
 
         example_idx += 1
        
-       # ppls: 一个包含困惑度（Perplexity, PPL）的列表。每个目标文本对应一个困惑度值。 icl_examples: 构建的 ICL 示例列表，这些示例将作为模型的输入上下文。 targets: 目标字符串列表，即模型需要预测的目标文本。x: 追加到 ICL 示例后的查询文本（query text）。
         edit_ppls = icl_lm_eval(model, tokenizer, icl_examples, [target_new, target_true], f'New Fact: {prompt} {target_new}\nPrompt: {prompt}')
 
-        edit_final_probs = [1 / edit_ppls[0], 1 / edit_ppls[1]]         # 如果 edit_ppls[0]（target_new 的困惑度）明显低于 edit_ppls[1]（target_true 的困惑度），说明模型更倾向于接受新事实。
+        edit_final_probs = [1 / edit_ppls[0], 1 / edit_ppls[1]]   
         orig_total_cnt += 1
         if edit_final_probs[0] > edit_final_probs[1]:
             orig_success_cnt += 1
