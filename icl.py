@@ -48,7 +48,6 @@ def icl_lm_eval_f1em(model, tokenizer, icl_examples, target, x):
     input_ids = encodings['input_ids'].to(device)
     attention_mask = encodings['attention_mask'].to(device)
     logits = model(input_ids=input_ids, attention_mask=attention_mask).logits
-    # logits = model.generate(input_ids=input_ids, attention_mask=attention_mask).logits
     ans = torch.argmax(logits, dim=-1)[:,-target_ids.size(1):-1].squeeze()
     target_ids = target_ids[:,1:]
     
@@ -75,39 +74,6 @@ def icl_lm_eval_ppls(model, tokenizer, icl_examples, targets, x):
             ppls.append(ppl.item())
     return ppls
 
-
-# def icl_lm_eval_ppls(model, tokenizer, icl_examples, targets, x):
-#     device = torch.device('cuda:0')
-#     ppls = []
-    
-#     # Encode icl_examples and input x together
-#     icl_input = ''.join(icl_examples) + x
-#     icl_input_ids = tokenizer(icl_input, return_tensors='pt', truncation=True, max_length=1520)['input_ids'].to(device)
-    
-#     for target in targets:
-#         tgt_len = len(tokenizer.encode(' ' + target))
-#         target_input = tokenizer(target, return_tensors='pt')['input_ids'].to(device)
-        
-#         # Concatenate icl_input_ids with target_input_ids
-#         input_ids = torch.cat([icl_input_ids, target_input], dim=1).to(device)
-        
-#         # Create target_ids for calculating loss
-#         target_ids = input_ids.clone()
-#         target_ids[:, :-tgt_len] = -100
-        
-#         with torch.no_grad():
-#             outputs = model(input_ids=input_ids)
-#             logits = outputs.logits
-            
-#             # Compute the log likelihood of the target sequence
-#             shift_logits = logits[..., :-1, :].contiguous()
-#             shift_labels = target_ids[..., 1:].contiguous()
-#             loss_fct = torch.nn.CrossEntropyLoss(ignore_index=-100)
-#             loss = loss_fct(shift_logits.view(-1, shift_logits.size(-1)), shift_labels.view(-1))
-#             ppl = torch.exp(loss)
-#             ppls.append(ppl.item())
-    
-#     return ppls
 
 def parse_args():
     parser = argparse.ArgumentParser(description="In Context Learning for pretrained GPTs")
@@ -198,7 +164,6 @@ if __name__ == '__main__':
     device = torch.device(f'cuda:0')
     args = parse_args()
     model = AutoModelForCausalLM.from_pretrained(model_name).to(device)
-    # model = LLM(model=model_name, trust_remote_code=True, gpu_memory_utilization=0.9, tensor_parallel_size=4)
     model.eval()
     tokenizer = AutoTokenizer.from_pretrained(model_name)
 
@@ -253,11 +218,6 @@ if __name__ == '__main__':
         # print("#2")
         icl_examples = construct_icl_examples(case_id, corpus_idx) + construct_icl_examples_manual()
         # icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n') 
-        # print(f"icl_examples: {icl_examples}")
-        # print(f"icl_examples_manual : {icl_examples_manual}")
-        # print(f"prompts_truth: {prompts_truth}")
-        # print(f"prompts_test: {prompts_test}")
-        # print(f"target_test: {target_test}")
 
         if "MzsRE" in args.testdata:
             # reliablilty (f1em)
@@ -284,8 +244,6 @@ if __name__ == '__main__':
             # reliablilty (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, locality_an], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}')
             orig_total_cnt, orig_success_cnt, orig_magnitude = wrap_ppls_count(edit_ppls, orig_total_cnt, orig_success_cnt, orig_magnitude)
-            # print(f"orig_total_cnt: {orig_total_cnt}")
-            # print(f"orig_success_cnt: {orig_success_cnt}")
 
             # generalization (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [target_test, locality_an], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {rephrase_prompt}')
@@ -294,12 +252,6 @@ if __name__ == '__main__':
             # locality (ppls)
             edit_ppls = icl_lm_eval_ppls(model,tokenizer, icl_examples, [locality_an, target_test, ], f'New Fact: {prompts_truth} {target_truth}\nPrompt: {locality_prompt}')
             total_cnt, success_cnt, magnitude = wrap_ppls_count(edit_ppls, total_cnt, success_cnt, magnitude)
-            # print(f"prompts_truth {prompts_truth}")
-            # print(f"target_truth {target_truth}")
-            # print(f"locality_prompt {locality_prompt}")
-            # print(f"target_test {target_test}")
-            # print(f"locality_an {locality_an}")
-            # print(f"success_cnt: {success_cnt}, total_cnt {total_cnt}")
 
             # portablility (f1em)
             ans = icl_lm_eval_f1em(model,tokenizer, icl_examples, portability_an, f'New Fact: {prompts_truth} {target_truth}\nPrompt: {portability_prompt}')
