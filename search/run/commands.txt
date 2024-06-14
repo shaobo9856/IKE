@@ -1,0 +1,8 @@
+# zsRE
+python icl.py --lang1 en --lang2 af --testdata MzsRE/mzsre_test_duplicate_ --traindata MzsRE/zsre_mend_train_ --indexdata mzsre_corpus_idx --manualdata zsre_multi
+
+# counterfact
+python icl.py --lang1 en --lang2 af --testdata MCounterFact/mcounterfact_test_ --traindata MCounterFact/counterfact-train_ --indexdata mcounterfact_corpus_idx --manualdata mcounterfact_multi
+
+# wikifactdiff
+python icl.py --lang1 en --lang2 af --testdata WikiFactDiff/wfd_test_ --traindata WikiFactDiff/wfd-train_ --indexdata wfd_corpus_idx --manualdata wfd_multi 
