@@ -5,7 +5,7 @@ Source code for "BMIKE-53: Investigating Cross-Lingual Knowledge Editing withIn-
 
 ### Run command
 
-cd ike && git checkout manual && python3 -m venv ike && source ike/bin/activate && pip install -r requirements.txt
+cd manual && python3 -m venv ike && source ike/bin/activate && pip install -r requirements.txt
 
 pip install --upgrade sentence-transformers
 
