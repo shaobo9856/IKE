@@ -103,21 +103,17 @@ def construct_icl_examples():
     with open(f'./data/manual_prompts/{args.manualdata}.json', 'r') as fIn: # mcounterfact_multi   zsre_multi   wfd_multi
         lines = json.load(fIn)
 
-        # 筛选不同类型的数据
         copy_lines = [line for line in lines if line["type"] == "copy"]
         update_lines = [line for line in lines if line["type"] == "update"]
         retain_lines = [line for line in lines if line["type"] == "retain"]
         portability_lines = [line for line in lines if line["type"] == "portability"]
 
-        # 选择每种类型的前2个
         selected_lines = (copy_lines[:2] + update_lines[:2] + retain_lines[:2] + portability_lines[:2])
 
-        # 构建icl_examples
         for line in selected_lines:
             lang1 = line['new_fact'] if args.lang1 == 'en' else args.lang1
             icl_examples.append(f"New Fact: {lang1} \nPrompt: {line[args.lang2]} \n\n")
         
-        # 打乱顺序
         random.shuffle(icl_examples)
     return icl_examples
 
@@ -189,7 +185,7 @@ if __name__ == '__main__':
 
         # print("#2")
 
-        # icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
+        # icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  
 
         if "MzsRE" in args.testdata:
             # reliablilty (f1em)
@@ -252,7 +248,6 @@ if __name__ == '__main__':
         example_idx += 1
         # print(example_idx)
 
-    # 打印结果
     print("F1EM score")
     if f1r: print("reliablilty_f1: %f   reliablilty_em: %f" % (my_avg(reliablilty_f1_list), my_avg(reliablilty_em_list)))
     if f1g: print("generalization_f1: %f    generalization_em: %f" % (my_avg(generalization_f1_list), my_avg(generalization_em_list)))
@@ -265,7 +260,6 @@ if __name__ == '__main__':
     if pplg: print("generalization_ppls: %f, magnitude: %f" % (para_success_cnt/para_total_cnt*100, para_magnitude/para_total_cnt*100))
 
 
-    # 写入结果到文件
     root_dir = os.path.dirname(os.path.abspath(__file__))
     output_file_name = f'output_{args.testdata}_{args.lang1}{args.lang2}.txt'
     output_file_path = os.path.join(root_dir, output_file_name)
