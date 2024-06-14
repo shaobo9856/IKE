@@ -1,10 +1,10 @@
 # IKE
-Source code for "Can We Edit Factual Knowledge by In-Context Learning?"
+Source code for "BMIKE-53: Investigating Cross-Lingual Knowledge Editing withIn-Context Learning"
+
 ## Overview
 
 ### Contrastive Knowledge Assessment
 
-git clone https://github.com/shaobo9856/IKE ike
 
 cd ike && git checkout search && python3 -m venv ike && source ike/bin/activate && pip install -r requirements.txt
 
@@ -12,7 +12,7 @@ pip install --upgrade sentence-transformers
 
 python -m pip install huggingface_hub
 
-huggingface-cli login --token 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
+huggingface-cli login --token 
 
 python icl.py --lang1 en --lang2 af  --testdata MzsRE/mzsre_test_duplicate_   --traindata MzsRE/zsre_mend_train_   --indexdata mzsre_corpus_idx  --manualdata zsre_multi --lcount 10
 
