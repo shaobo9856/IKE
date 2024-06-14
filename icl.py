@@ -135,14 +135,12 @@ def construct_icl_examples(query_id, corpus_idx):
         else:
             demos = {entry["case_id"]: entry for entry in lines}
     if query_id in corpus_idx:
-        # 获取对应的idxs
         demo_ids = corpus_idx[query_id]
         # print(demo_ids)
-        # 将每个index对应的example加入list
         for demo_id, o in zip(demo_ids[:8], order[:8]):
             if demo_id not in demos:
-                print(f"Warning: demo_id {demo_id} 不在 demos 中，跳过此条目。")
-                logging.warning(f"demo_id {demo_id} 不在 demos 中，跳过此条目。")
+                print(f"Warning: demo_id {demo_id} not in demos, skipping")
+                logging.warning(f"demo_id {demo_id} not in demos, skipping")
                 continue
             line = demos[demo_id]
             if 'WikiFac' in args.testdata:
@@ -254,7 +252,7 @@ if __name__ == '__main__':
 
         # print("#2")
         icl_examples = construct_icl_examples(case_id, corpus_idx) + construct_icl_examples_manual()
-        # icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n')  # 要不要加prompts_test + target_test。  Prompt: {prompts_test}{target_test}\n\n
+        # icl_examples.append(f'New Fact: {prompts_truth} {target_truth}\nPrompt: {prompts_test}{target_test}\n\n') 
         # print(f"icl_examples: {icl_examples}")
         # print(f"icl_examples_manual : {icl_examples_manual}")
         # print(f"prompts_truth: {prompts_truth}")
@@ -332,7 +330,6 @@ if __name__ == '__main__':
         example_idx += 1
         # print(example_idx)
     
-    # 打印结果
     print("F1EM score")
     if f1r: print("reliablilty_f1: %f   reliablilty_em: %f" % (my_avg(reliablilty_f1_list), my_avg(reliablilty_em_list)))
     if f1g: print("generalization_f1: %f    generalization_em: %f" % (my_avg(generalization_f1_list), my_avg(generalization_em_list)))
@@ -345,7 +342,6 @@ if __name__ == '__main__':
     if pplg: print("generalization_ppls: %f, magnitude: %f" % (para_success_cnt/para_total_cnt*100, para_magnitude/para_total_cnt*100))
 
 
-    # 写入结果到文件
     root_dir = os.path.dirname(os.path.abspath(__file__))
     output_file_name = f'output_{args.testdata}_{args.lang1}{args.lang2}.txt'
     output_file_path = os.path.join(root_dir, output_file_name)
