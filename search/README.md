@@ -1,4 +1,4 @@
-# IKE
+# BMIKE-53
 Source code for "BMIKE-53: Investigating Cross-Lingual Knowledge Editing withIn-Context Learning"
 
 ## Overview
