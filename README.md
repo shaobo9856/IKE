@@ -17,7 +17,7 @@ Search subfolder: for MIKE-search pipeline
 ### 1. Data & Code
 data BMIKE-53 is located in ./manual/data/
 
-data MIKE is located in ./manual/
+code MIKE is located in ./manual/
 
 
 ### Acknowledgement
