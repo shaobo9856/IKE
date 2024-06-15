@@ -19,3 +19,6 @@ data BMIKE-53 is located in ./manual/data/
 
 data MIKE is located in ./manual/
 
+
+### Acknowledgement
+- Our codes are based on [IKE](https://github.com/pkunlp-icler/IKE), and we thank their outstanding open-source contributions.
