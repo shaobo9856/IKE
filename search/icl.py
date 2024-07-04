@@ -44,7 +44,7 @@ def my_avg(a):
 def icl_lm_eval_f1em(model, tokenizer, icl_examples, target, x):   
     device = torch.device(f'cuda:0')
     target_ids = tokenizer(target, return_tensors='pt')['input_ids'].to(device)
-    encodings = tokenizer(''.join(icl_examples) + f'{x} {target}', return_tensors='pt',max_length=1520) # few shot  -> zero shot: ''.join(icl_examples) + 
+    encodings = tokenizer(''.join(icl_examples) + f'{x}', return_tensors='pt',max_length=1520) # few shot  -> zero shot: ''.join(icl_examples) + 
     input_ids = encodings['input_ids'].to(device)
     attention_mask = encodings['attention_mask'].to(device)
     logits = model(input_ids=input_ids, attention_mask=attention_mask).logits
